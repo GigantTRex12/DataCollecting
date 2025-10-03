@@ -2,6 +2,8 @@ package testutils;
 
 import Utils.InputUtils;
 
+import java.io.ByteArrayInputStream;
+
 public class InputBuilder {
 
     private static final String LINEBREAK = System.lineSeparator();
@@ -43,7 +45,7 @@ public class InputBuilder {
     }
 
     public void set() {
-        InputUtils.setInputStream(input);
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
     }
 
 }
