@@ -26,8 +26,7 @@ public record Question(
         Predicate<Map<String, Object>> condition,
         BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator, // on multilines this validates each line separately
         NormalizerBiFunction normalizer,
-        boolean multiline,
-        String fixedChoice
+        boolean multiline
 ) {
     public Question {
         requireNonNull(key);
@@ -153,8 +152,7 @@ public record Question(
                     condition,
                     validator,
                     normalizer,
-                    multiline,
-                    null
+                    multiline
             );
         }
     }

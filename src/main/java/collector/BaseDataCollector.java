@@ -25,9 +25,15 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
             entry("e", "Exit")
     );
 
+    protected final List<Question> questions;
+
     protected List<T> data = new ArrayList<>();
     @Getter
     protected Metadata currMetadata;
+
+    protected BaseDataCollector() {
+        questions = getQuestions();
+    }
 
     public void collect() throws CollectorExceptionWrapper {
         setMetadata();
@@ -51,14 +57,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     private void addData() throws CollectorExceptionWrapper {
-        Map<String, Object> typeMap = Survey.run(getQuestions(), currMetadata);
+        Map<String, Object> typeMap = Survey.run(questions, currMetadata);
         T dataSet = mapToDataset(typeMap);
         if (validateDataSet(dataSet)) {
             this.data.add(dataSet);
         }
     }
 
-    protected abstract List<Question> getQuestions() throws CollectorExceptionWrapper;
+    protected abstract List<Question> getQuestions();
 
     protected abstract Class<? extends T> getGenericClass() throws CollectorExceptionWrapper;
 

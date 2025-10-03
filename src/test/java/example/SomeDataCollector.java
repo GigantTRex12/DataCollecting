@@ -13,7 +13,7 @@ public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
     }
 
     @Override
-    protected List<Question> getQuestions() throws CollectorExceptionWrapper {
+    protected List<Question> getQuestions() {
         return List.of(
                 Question.ask("name", "Enter some name")
                         .validate((s, m) -> s.orElse("").length() >= 4 ? Optional.empty() : Optional.of("Must have at least 4 symbols"))
