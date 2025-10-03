@@ -1,7 +1,7 @@
 package collector;
 
-import berlin.yuna.typemap.model.LinkedTypeMap;
-import berlin.yuna.typemap.model.Type;
+import java.util.Map;
+import java.util.Optional;
 import exceptions.InvalidInputFormatException;
 
 import java.util.ArrayList;
@@ -23,8 +23,8 @@ import static java.util.Objects.requireNonNull;
 public record Question(
         String key, // use "&" for multiple values in one question
         String prompt,
-        Predicate<LinkedTypeMap> condition,
-        BiFunction<Type<String>, LinkedTypeMap, Type<String>> validator,
+        Predicate<Map<String, Object>> condition,
+        BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator,
         // on multilines this validates each line seperately
         NormalizerBiFunction normalizer,
         boolean multiline
@@ -33,8 +33,8 @@ public record Question(
         requireNonNull(key);
         requireNonNull(prompt);
         condition = condition != null ? condition : answers -> true;
-        validator = validator != null ? validator : (answer, answers) -> Type.empty();
-        normalizer = normalizer != null ? normalizer : (answer, answers) -> answer.asString();
+        validator = validator != null ? validator : (answer, answers) -> Optional.empty();
+        normalizer = normalizer != null ? normalizer : (answer, answers) -> answer.orElse("");
     }
 
     public static Builder ask(final String key, final String prompt) {
@@ -48,8 +48,8 @@ public record Question(
     public static final class Builder {
         private final String key;
         private final String prompt;
-        private Predicate<LinkedTypeMap> condition;
-        private BiFunction<Type<String>, LinkedTypeMap, Type<String>> validator;
+        private Predicate<Map<String, Object>> condition;
+        private BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator;
         private NormalizerBiFunction normalizer;
         private boolean multiline = false;
         private String conditionPrompt;
@@ -59,12 +59,12 @@ public record Question(
             this.prompt = prompt;
         }
 
-        public Builder when(final Predicate<LinkedTypeMap> condition) {
+        public Builder when(final Predicate<Map<String, Object>> condition) {
             this.condition = condition;
             return this;
         }
 
-        public Builder validate(final BiFunction<Type<String>, LinkedTypeMap, Type<String>> validator) {
+        public Builder validate(final BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator) {
             this.validator = validator;
             this.conditionPrompt = null;
             return this;
@@ -83,16 +83,15 @@ public record Question(
         // easier ways to create validator/normalizer
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
             this.normalizer = (answer, answers) -> {
-                final String string = answer.asString().strip();
-                return parser.apply(string);
+                return parser.apply(answer.orElse("").strip());
             };
             return this;
         }
 
         public Builder regex(final String regex) {
             validator = (t, m) -> {
-                if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(t.orElse("")).find()) return Type.empty();
-                else return Type.typeOf("Input needs to match pattern " + regex);
+                if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(t.orElse("")).find()) return Optional.empty();
+                else return Optional.of("Input needs to match pattern " + regex);
             };
             conditionPrompt = "Format: " + regex;
             return this;
@@ -100,8 +99,8 @@ public record Question(
 
         public Builder options(String[] options) {
             validator = (t, m) -> {
-                if (contains(options, t.value())) return Type.empty();
-                else return Type.typeOf("Input needs to be one of the given options");
+                if (contains(options, t.orElse(""))) return Optional.empty();
+                else return Optional.of("Input needs to be one of the given options");
             };
             conditionPrompt = "Options: " + join(options, ", ");
             return this;
@@ -109,8 +108,8 @@ public record Question(
 
         public Builder options(String[] options1, String[] options2) {
             validator = (t, m) -> {
-                if (contains(options1, t.value()) || contains(options2, t.value())) return Type.empty();
-                else return Type.typeOf("Input needs to be one of the given options");
+                if (contains(options1, t.orElse("")) || contains(options2, t.orElse(""))) return Optional.empty();
+                else return Optional.of("Input needs to be one of the given options");
             };
             conditionPrompt = "Options: " + join(options1, options2, ", ");
             return this;
@@ -119,7 +118,7 @@ public record Question(
         // only use after setting a validator/normalizer
         public Builder emptyToNull() {
             validator = validator == null ? null : new EmptyIfEmptyBiFunction(validator);
-            if (normalizer == null) normalizer = (answer, answers) -> answer.asString().strip();
+            if (normalizer == null) normalizer = (answer, answers) -> answer.orElse("").strip();
             normalizer = new NullIfEmptyNormalizer(normalizer);
             return this;
         }
@@ -138,7 +137,7 @@ public record Question(
             this.normalizer = (answer, answers) -> {
                 List<Object> list = new ArrayList<>();
                 for (ThrowingFunction<String, Object, InvalidInputFormatException> parser : parsers)
-                    list.add(parser.apply(answer.asString().strip()));
+                    list.add(parser.apply(answer.orElse("").strip()));
                 return list;
             };
             return this;

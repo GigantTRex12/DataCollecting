@@ -1,6 +1,5 @@
 package collector;
 
-import berlin.yuna.typemap.model.LinkedTypeMap;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 import exceptions.CollectorExceptionWrapper;
@@ -52,7 +51,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     private void addData() throws CollectorExceptionWrapper {
-        LinkedTypeMap typeMap = Survey.run(getQuestions(), currMetadata);
+        Map<String, Object> typeMap = Survey.run(getQuestions(), currMetadata);
         T dataSet = mapToDataset(typeMap);
         if (validateDataSet(dataSet)) {
             this.data.add(dataSet);
@@ -68,7 +67,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     // TODO: should have default implementation
-    protected abstract T mapToDataset(LinkedTypeMap map) throws CollectorExceptionWrapper;
+    protected abstract T mapToDataset(Map<String, Object> map) throws CollectorExceptionWrapper;
 
     protected void setMetadata() throws CollectorExceptionWrapper {
         currMetadata = null;
