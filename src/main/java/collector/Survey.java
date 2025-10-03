@@ -1,14 +1,15 @@
 package collector;
 
 import berlin.yuna.typemap.model.LinkedTypeMap;
-import berlin.yuna.typemap.model.Type;
 import dataset.Metadata;
 import exceptions.InvalidInputFormatException;
 
 import java.util.List;
+import java.util.Optional;
 
 import static Utils.InputUtils.input;
 import static Utils.InputUtils.multilineInput;
+import static java.lang.IO.println;
 import static java.lang.System.lineSeparator;
 
 /**
@@ -45,15 +46,15 @@ public class Survey {
 
             while (true) {
                 final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
-                final Type<String> input = Type.typeOf(raw);
+                final Optional<String> input = Optional.of(raw);
 
                 if (!validateAndPrintError(input, question, answers)) continue;
 
                 try {
                     final Object normalized = question.normalizer().apply(input, answers);
-                    putInMap(answers, question.key(), (normalized instanceof Type<?> t) ? t.value() : normalized);
+                    putInMap(answers, question.key(), (normalized instanceof Optional<?> t) ? t.orElse(null) : normalized);
                 } catch (InvalidInputFormatException e) {
-                    System.out.println("Invalid input: " + e.getMessage());
+                    println("Invalid input: " + e.getMessage());
                     continue;
                 }
                 break;
@@ -62,16 +63,16 @@ public class Survey {
         return answers;
     }
 
-    private static boolean validateAndPrintError(Type<String> input, Question question, LinkedTypeMap answers) {
-        Type<String> error = Type.empty();
-        if (question.multiline() && !input.orElse("").equals("")) {
-            for (String s : input.value().split(lineSeparator())) {
-                error = question.validator().apply(Type.typeOf(s), answers);
+    private static boolean validateAndPrintError(Optional<String> input, Question question, LinkedTypeMap answers) {
+        Optional<String> error = Optional.empty();
+        if (question.multiline() && !input.orElse("").isEmpty()) {
+            for (String s : input.orElse("").split(lineSeparator())) {
+                error = question.validator().apply(Optional.of(s), answers);
                 if (error.isPresent()) break;
             }
         } else error = question.validator().apply(input, answers);
         if (error.isPresent()) {
-            System.out.println("Invalid input: " + error.asString());
+            println("Invalid input: " + error.get());
             return false;
         }
         return true;

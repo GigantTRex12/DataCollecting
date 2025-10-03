@@ -1,10 +1,10 @@
 package example;
 
-import berlin.yuna.typemap.model.Type;
 import collector.Question;
 import exceptions.CollectorExceptionWrapper;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
 
@@ -16,17 +16,17 @@ public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
     protected List<Question> getQuestions() throws CollectorExceptionWrapper {
         return List.of(
                 Question.ask("name", "Enter some name")
-                        .validate((s, m) -> s.value().length() >= 4 ? Type.empty() : Type.typeOf("Must have at least 4 symbols"))
+                        .validate((s, m) -> s.orElse("").length() >= 4 ? Optional.empty() : Optional.of("Must have at least 4 symbols"))
                         .build(),
 
                 Question.ask("number", "Enter some number")
                         .regex("^0$|^[1-9]\\d*$")
-                        .normalize((s, m) -> Integer.parseInt(s.value()))
+                        .normalize((s, m) -> Integer.parseInt(s.orElse("")))
                         .build(),
 
                 Question.ask("someValue", "Enter some value")
                         .when(m -> (int) m.get("number") >= 10)
-                        .normalize((s, m) -> "Value is: " + s.value())
+                        .normalize((s, m) -> "Value is: " + s.orElse(""))
                         .build()
         );
     }

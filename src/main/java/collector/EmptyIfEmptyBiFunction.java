@@ -1,19 +1,19 @@
 package collector;
 
 import berlin.yuna.typemap.model.LinkedTypeMap;
-import berlin.yuna.typemap.model.Type;
 import lombok.AllArgsConstructor;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 @AllArgsConstructor
-public class EmptyIfEmptyBiFunction implements BiFunction<Type<String>, LinkedTypeMap, Type<String>> {
+public class EmptyIfEmptyBiFunction implements BiFunction<Optional<String>, LinkedTypeMap, Optional<String>> {
 
-    private final BiFunction<Type<String>, LinkedTypeMap, Type<String>> function;
+    private final BiFunction<Optional<String>, LinkedTypeMap, Optional<String>> function;
 
     @Override
-    public Type<String> apply(Type<String> s, LinkedTypeMap m) {
-        if ("".equals(s.orElse(""))) return Type.empty();
+    public Optional<String> apply(Optional<String> s, LinkedTypeMap m) {
+        if (s.orElse("").isEmpty()) return Optional.empty();
         return function.apply(s, m);
     }
 
