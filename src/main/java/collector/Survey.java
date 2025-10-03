@@ -15,13 +15,13 @@ import static java.lang.System.lineSeparator;
 
 /**
  * Utility class to execute a sequence of {@link Question}s in order, collecting
- * validated and normalized answers into a {@link Map<String, Object>}.
+ * validated and normalized answers into a {@link Map}.
  */
-public class Survey {
+class Survey {
 
     /**
      * Runs the survey for a given list of {@link Question}s and returns all
-     * collected answers as a {@link Map<String, Object>}.
+     * collected answers as a {@link Map}.
      *
      * @param questions the survey questions to ask
      * @return a map of keys to validated, normalized user answers
@@ -38,7 +38,7 @@ public class Survey {
                 final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
                 final Optional<String> input = Optional.of(raw);
 
-                if (!validateAndPrintError(input, question, answers)) continue;
+                if (!validateAndPrintError(raw, question, answers)) continue;
 
                 try {
                     final Object normalized = question.normalizer().apply(input, answers);
@@ -53,14 +53,14 @@ public class Survey {
         return answers;
     }
 
-    private static boolean validateAndPrintError(Optional<String> input, Question question, Map<String, Object> answers) {
+    private static boolean validateAndPrintError(String input, Question question, Map<String, Object> answers) {
         Optional<String> error = Optional.empty();
-        if (question.multiline() && !input.orElse("").isEmpty()) {
-            for (String s : input.orElse("").split(lineSeparator())) {
+        if (question.multiline() && !input.isEmpty()) {
+            for (String s : input.split(lineSeparator())) {
                 error = question.validator().apply(Optional.of(s), answers);
                 if (error.isPresent()) break;
             }
-        } else error = question.validator().apply(input, answers);
+        } else error = question.validator().apply(Optional.of(input), answers);
         if (error.isPresent()) {
             println("Invalid input: " + error.get());
             return false;

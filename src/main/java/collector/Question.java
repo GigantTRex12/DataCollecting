@@ -24,17 +24,17 @@ public record Question(
         String key, // use "&" for multiple values in one question
         String prompt,
         Predicate<Map<String, Object>> condition,
-        BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator,
-        // on multilines this validates each line seperately
+        BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator, // on multilines this validates each line separately
         NormalizerBiFunction normalizer,
-        boolean multiline
+        boolean multiline,
+        String fixedChoice
 ) {
     public Question {
         requireNonNull(key);
         requireNonNull(prompt);
-        condition = condition != null ? condition : answers -> true;
-        validator = validator != null ? validator : (answer, answers) -> Optional.empty();
-        normalizer = normalizer != null ? normalizer : (answer, answers) -> answer.orElse("");
+        condition = condition != null ? condition : _ -> true;
+        validator = validator != null ? validator : (_, _) -> Optional.empty();
+        normalizer = normalizer != null ? normalizer : (answer, _) -> answer.orElse("");
     }
 
     public static Builder ask(final String key, final String prompt) {
@@ -76,20 +76,18 @@ public record Question(
         }
 
         public Builder multiline() {
-            multiline = !multiline;
+            multiline = true;
             return this;
         }
 
         // easier ways to create validator/normalizer
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
-            this.normalizer = (answer, answers) -> {
-                return parser.apply(answer.orElse("").strip());
-            };
+            this.normalizer = (answer, _) -> parser.apply(answer.orElse("").strip());
             return this;
         }
 
         public Builder regex(final String regex) {
-            validator = (t, m) -> {
+            validator = (t, _) -> {
                 if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(t.orElse("")).find()) return Optional.empty();
                 else return Optional.of("Input needs to match pattern " + regex);
             };
@@ -98,7 +96,7 @@ public record Question(
         }
 
         public Builder options(String[] options) {
-            validator = (t, m) -> {
+            validator = (t, _) -> {
                 if (contains(options, t.orElse(""))) return Optional.empty();
                 else return Optional.of("Input needs to be one of the given options");
             };
@@ -118,7 +116,7 @@ public record Question(
         // only use after setting a validator/normalizer
         public Builder emptyToNull() {
             validator = validator == null ? null : new EmptyIfEmptyBiFunction(validator);
-            if (normalizer == null) normalizer = (answer, answers) -> answer.orElse("").strip();
+            if (normalizer == null) normalizer = (answer, _) -> answer.orElse("").strip();
             normalizer = new NullIfEmptyNormalizer(normalizer);
             return this;
         }
@@ -134,7 +132,7 @@ public record Question(
         }
 
         public Builder normalizers(final ThrowingFunction<String, Object, InvalidInputFormatException>... parsers) {
-            this.normalizer = (answer, answers) -> {
+            this.normalizer = (answer, _) -> {
                 List<Object> list = new ArrayList<>();
                 for (ThrowingFunction<String, Object, InvalidInputFormatException> parser : parsers)
                     list.add(parser.apply(answer.orElse("").strip()));
@@ -155,7 +153,8 @@ public record Question(
                     condition,
                     validator,
                     normalizer,
-                    multiline
+                    multiline,
+                    null
             );
         }
     }
