@@ -1,6 +1,6 @@
 package collector;
 
-import berlin.yuna.typemap.model.LinkedTypeMap;
+import java.util.Map;
 import java.util.Optional;
 import exceptions.InvalidInputFormatException;
 
@@ -23,8 +23,8 @@ import static java.util.Objects.requireNonNull;
 public record Question(
         String key, // use "&" for multiple values in one question
         String prompt,
-        Predicate<LinkedTypeMap> condition,
-        BiFunction<Optional<String>, LinkedTypeMap, Optional<String>> validator,
+        Predicate<Map<String, Object>> condition,
+        BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator,
         // on multilines this validates each line seperately
         NormalizerBiFunction normalizer,
         boolean multiline
@@ -48,8 +48,8 @@ public record Question(
     public static final class Builder {
         private final String key;
         private final String prompt;
-        private Predicate<LinkedTypeMap> condition;
-        private BiFunction<Optional<String>, LinkedTypeMap, Optional<String>> validator;
+        private Predicate<Map<String, Object>> condition;
+        private BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator;
         private NormalizerBiFunction normalizer;
         private boolean multiline = false;
         private String conditionPrompt;
@@ -59,12 +59,12 @@ public record Question(
             this.prompt = prompt;
         }
 
-        public Builder when(final Predicate<LinkedTypeMap> condition) {
+        public Builder when(final Predicate<Map<String, Object>> condition) {
             this.condition = condition;
             return this;
         }
 
-        public Builder validate(final BiFunction<Optional<String>, LinkedTypeMap, Optional<String>> validator) {
+        public Builder validate(final BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator) {
             this.validator = validator;
             this.conditionPrompt = null;
             return this;
@@ -83,7 +83,7 @@ public record Question(
         // easier ways to create validator/normalizer
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
             this.normalizer = (answer, answers) -> {
-                return parser.apply(answer.orElse(""));
+                return parser.apply(answer.orElse("").strip());
             };
             return this;
         }

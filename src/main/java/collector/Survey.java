@@ -1,10 +1,11 @@
 package collector;
 
-import berlin.yuna.typemap.model.LinkedTypeMap;
 import dataset.Metadata;
 import exceptions.InvalidInputFormatException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static Utils.InputUtils.input;
@@ -14,30 +15,19 @@ import static java.lang.System.lineSeparator;
 
 /**
  * Utility class to execute a sequence of {@link Question}s in order, collecting
- * validated and normalized answers into a {@link LinkedTypeMap}.
+ * validated and normalized answers into a {@link Map<String, Object>}.
  */
 public class Survey {
 
     /**
-     * Runs the survey for a given array of {@link Question}s and returns all
-     * collected answers as a {@link LinkedTypeMap}.
-     *
-     * @param questions the survey questions to ask
-     * @return a map of keys to validated, normalized user answers
-     */
-    public static LinkedTypeMap run(Metadata strategy, final Question... questions) {
-        return run(List.of(questions), strategy);
-    }
-
-    /**
      * Runs the survey for a given list of {@link Question}s and returns all
-     * collected answers as a {@link LinkedTypeMap}.
+     * collected answers as a {@link Map<String, Object>}.
      *
      * @param questions the survey questions to ask
      * @return a map of keys to validated, normalized user answers
      */
-    public static LinkedTypeMap run(final List<Question> questions, Metadata metadata) {
-        final LinkedTypeMap answers = new LinkedTypeMap();
+    public static Map<String, Object> run(final List<Question> questions, Metadata metadata) {
+        final Map<String, Object> answers = new HashMap<>();
         if (metadata != null) {
             answers.put(metadata.getClass().getSimpleName().toLowerCase(), metadata);
         }
@@ -63,7 +53,7 @@ public class Survey {
         return answers;
     }
 
-    private static boolean validateAndPrintError(Optional<String> input, Question question, LinkedTypeMap answers) {
+    private static boolean validateAndPrintError(Optional<String> input, Question question, Map<String, Object> answers) {
         Optional<String> error = Optional.empty();
         if (question.multiline() && !input.orElse("").isEmpty()) {
             for (String s : input.orElse("").split(lineSeparator())) {
@@ -78,7 +68,7 @@ public class Survey {
         return true;
     }
 
-    private static void putInMap(LinkedTypeMap answers, String key, Object value) {
+    private static void putInMap(Map<String, Object> answers, String key, Object value) {
         if (key.contains("&")) {
             if (!(value instanceof List<?> values))
                 throw new IllegalStateException("For multiple fields value has to be a List");

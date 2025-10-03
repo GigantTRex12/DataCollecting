@@ -1,12 +1,12 @@
 package example;
 
-import berlin.yuna.typemap.model.LinkedTypeMap;
 import collector.BaseDataCollector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import exceptions.CollectorExceptionWrapper;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -36,7 +36,7 @@ public abstract class AbstractDataCollector<T extends AbstractDataSet> extends B
     }
 
     @Override
-    protected T mapToDataset(LinkedTypeMap map) throws CollectorExceptionWrapper {
+    protected T mapToDataset(Map<String, Object> map) throws CollectorExceptionWrapper {
         try {
             return JsonUtils.parseJson(JsonUtils.toJson(map), getGenericClass());
         } catch (JsonProcessingException e) {

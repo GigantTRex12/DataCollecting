@@ -17,12 +17,7 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>berlin.yuna</groupId>
-            <artifactId>type-map</artifactId>
-            <version>2025.08.2200717</version>
-        </dependency>
-
+        <!-- Testing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -30,7 +25,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Testing -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
