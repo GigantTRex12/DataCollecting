@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static Utils.InputUtils.input;
+import static java.lang.IO.println;
 import static java.util.Map.entry;
 
 public abstract class BaseDataCollector<T extends BaseDataSet> {
@@ -52,6 +53,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
                     saveData();
                     exit = true;
                 }
+                default -> println("Unknown action: " + action);
             }
         }
     }
@@ -86,7 +88,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     protected void printData() throws CollectorExceptionWrapper {
         for (BaseDataSet data : data) {
-            System.out.println(data);
+            println(data);
         }
     }
 
