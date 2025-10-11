@@ -3,7 +3,6 @@ package collector;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 import exceptions.CollectorExceptionWrapper;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +28,15 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     protected final List<Question> questions;
 
     protected List<T> data = new ArrayList<>();
-    @Getter
+
     protected Metadata currMetadata;
 
     protected BaseDataCollector() {
         questions = getQuestions();
+    }
+
+    public Metadata getCurrMetadata() {
+        return currMetadata;
     }
 
     public void collect() throws CollectorExceptionWrapper {

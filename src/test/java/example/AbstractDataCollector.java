@@ -3,17 +3,20 @@ package example;
 import collector.BaseDataCollector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import exceptions.CollectorExceptionWrapper;
-import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 public abstract class AbstractDataCollector<T extends AbstractDataSet> extends BaseDataCollector<T> {
 
     private final String filename;
     private final Class<T> t;
+
+    public AbstractDataCollector(String filename, Class<T> t) {
+        this.filename = filename;
+        this.t = t;
+    }
 
     @Override
     protected void setMetadata() {
