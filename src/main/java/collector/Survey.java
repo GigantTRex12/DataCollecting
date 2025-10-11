@@ -38,6 +38,20 @@ class Survey {
         for (final Question question : questions) {
             if (!question.condition().test(answers)) continue;
 
+            if (presetAnswers.containsKey(question)) {
+                String preset = presetAnswers.get(question);
+                if (!validateAndPrintError(preset, question, answers)) presetAnswers.remove(question);
+                else {
+                    try {
+                        final Object normalized = question.normalizer().apply(preset, answers);
+                        putInMap(answers, question.key(), (normalized instanceof Optional<?> t) ? t.orElse(null) : normalized);
+                    } catch (InvalidInputFormatException e) {
+                        println("Invalid input: " + e.getMessage());
+                        presetAnswers.remove(question);
+                    }
+                }
+            }
+
             while (true) {
                 final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
 

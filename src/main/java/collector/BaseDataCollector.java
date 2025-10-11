@@ -97,6 +97,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     protected abstract void saveData() throws CollectorExceptionWrapper;
 
+    // TODO: write tests for this
     private void fixChoices() {
         survey.presetAnswers();
     }
