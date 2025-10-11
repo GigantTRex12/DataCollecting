@@ -24,7 +24,7 @@ public record Question(
         String key, // use "&" for multiple values in one question
         String prompt,
         Predicate<Map<String, Object>> condition,
-        BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator, // on multilines this validates each line separately
+        BiFunction<String, Map<String, Object>, Optional<String>> validator, // on multilines this validates each line separately
         NormalizerBiFunction normalizer,
         boolean multiline
 ) {
@@ -33,7 +33,7 @@ public record Question(
         requireNonNull(prompt);
         condition = condition != null ? condition : _ -> true;
         validator = validator != null ? validator : (_, _) -> Optional.empty();
-        normalizer = normalizer != null ? normalizer : (answer, _) -> answer.orElse("");
+        normalizer = normalizer != null ? normalizer : (answer, _) -> answer;
     }
 
     public static Builder ask(final String key, final String prompt) {
@@ -48,7 +48,7 @@ public record Question(
         private final String key;
         private final String prompt;
         private Predicate<Map<String, Object>> condition;
-        private BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator;
+        private BiFunction<String, Map<String, Object>, Optional<String>> validator;
         private NormalizerBiFunction normalizer;
         private boolean multiline = false;
         private String conditionPrompt;
@@ -63,7 +63,7 @@ public record Question(
             return this;
         }
 
-        public Builder validate(final BiFunction<Optional<String>, Map<String, Object>, Optional<String>> validator) {
+        public Builder validate(final BiFunction<String, Map<String, Object>, Optional<String>> validator) {
             this.validator = validator;
             this.conditionPrompt = null;
             return this;
@@ -81,13 +81,13 @@ public record Question(
 
         // easier ways to create validator/normalizer
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
-            this.normalizer = (answer, _) -> parser.apply(answer.orElse("").strip());
+            this.normalizer = (answer, _) -> parser.apply(answer.strip());
             return this;
         }
 
         public Builder regex(final String regex) {
-            validator = (t, _) -> {
-                if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(t.orElse("")).find()) return Optional.empty();
+            validator = (s, _) -> {
+                if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(s).find()) return Optional.empty();
                 else return Optional.of("Input needs to match pattern " + regex);
             };
             conditionPrompt = "Format: " + regex;
@@ -95,8 +95,8 @@ public record Question(
         }
 
         public Builder options(String[] options) {
-            validator = (t, _) -> {
-                if (contains(options, t.orElse(""))) return Optional.empty();
+            validator = (s, _) -> {
+                if (contains(options, s)) return Optional.empty();
                 else return Optional.of("Input needs to be one of the given options");
             };
             conditionPrompt = "Options: " + join(options, ", ");
@@ -104,8 +104,8 @@ public record Question(
         }
 
         public Builder options(String[] options1, String[] options2) {
-            validator = (t, m) -> {
-                if (contains(options1, t.orElse("")) || contains(options2, t.orElse(""))) return Optional.empty();
+            validator = (s, _) -> {
+                if (contains(options1, s) || contains(options2, s)) return Optional.empty();
                 else return Optional.of("Input needs to be one of the given options");
             };
             conditionPrompt = "Options: " + join(options1, options2, ", ");
@@ -115,7 +115,7 @@ public record Question(
         // only use after setting a validator/normalizer
         public Builder emptyToNull() {
             validator = validator == null ? null : new EmptyIfEmptyBiFunction(validator);
-            if (normalizer == null) normalizer = (answer, _) -> answer.orElse("").strip();
+            if (normalizer == null) normalizer = (answer, _) -> answer.strip();
             normalizer = new NullIfEmptyNormalizer(normalizer);
             return this;
         }
@@ -134,7 +134,7 @@ public record Question(
             this.normalizer = (answer, _) -> {
                 List<Object> list = new ArrayList<>();
                 for (ThrowingFunction<String, Object, InvalidInputFormatException> parser : parsers)
-                    list.add(parser.apply(answer.orElse("").strip()));
+                    list.add(parser.apply(answer.strip()));
                 return list;
             };
             return this;

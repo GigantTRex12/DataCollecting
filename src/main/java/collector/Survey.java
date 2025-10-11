@@ -3,10 +3,7 @@ package collector;
 import dataset.Metadata;
 import exceptions.InvalidInputFormatException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static Utils.InputUtils.input;
 import static Utils.InputUtils.multilineInput;
@@ -19,14 +16,21 @@ import static java.lang.System.lineSeparator;
  */
 class Survey {
 
+    private final List<Question> questions;
+    private final Map<Question, String> presetAnswers;
+
+    Survey(List<Question> questions) {
+        this.questions = Collections.unmodifiableList(questions);
+        presetAnswers = new HashMap<>();
+    }
+
     /**
      * Runs the survey for a given list of {@link Question}s and returns all
      * collected answers as a {@link Map}.
      *
-     * @param questions the survey questions to ask
      * @return a map of keys to validated, normalized user answers
      */
-    public static Map<String, Object> run(final List<Question> questions, Metadata metadata) {
+    Map<String, Object> run(Metadata metadata) {
         final Map<String, Object> answers = new HashMap<>();
         if (metadata != null) {
             answers.put(metadata.getClass().getSimpleName().toLowerCase(), metadata);
@@ -36,12 +40,11 @@ class Survey {
 
             while (true) {
                 final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
-                final Optional<String> input = Optional.of(raw);
 
                 if (!validateAndPrintError(raw, question, answers)) continue;
 
                 try {
-                    final Object normalized = question.normalizer().apply(input, answers);
+                    final Object normalized = question.normalizer().apply(raw, answers);
                     putInMap(answers, question.key(), (normalized instanceof Optional<?> t) ? t.orElse(null) : normalized);
                 } catch (InvalidInputFormatException e) {
                     println("Invalid input: " + e.getMessage());
@@ -57,10 +60,10 @@ class Survey {
         Optional<String> error = Optional.empty();
         if (question.multiline() && !input.isEmpty()) {
             for (String s : input.split(lineSeparator())) {
-                error = question.validator().apply(Optional.of(s), answers);
+                error = question.validator().apply(s, answers);
                 if (error.isPresent()) break;
             }
-        } else error = question.validator().apply(Optional.of(input), answers);
+        } else error = question.validator().apply(input, answers);
         if (error.isPresent()) {
             println("Invalid input: " + error.get());
             return false;
@@ -79,8 +82,20 @@ class Survey {
         } else answers.put(key, value);
     }
 
-    private Survey() {
-        // Utility class, no instances allowed
+    void presetAnswers() {
+        clearPresetAnswers();
+        for (final Question question : questions) {
+            while (true) {
+                final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
+                if (raw.isEmpty()) break;
+                else if (raw.equals("\\")) presetAnswers.put(question, "");
+                else presetAnswers.put(question, raw);
+            }
+        }
+    }
+
+    void clearPresetAnswers() {
+        presetAnswers.clear();
     }
 
 }

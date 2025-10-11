@@ -1,8 +1,8 @@
 package collector;
 
-import java.util.Map;
-import java.util.Optional;
 import exceptions.InvalidInputFormatException;
+
+import java.util.Map;
 
 public class NullIfEmptyNormalizer implements NormalizerBiFunction {
 
@@ -13,8 +13,8 @@ public class NullIfEmptyNormalizer implements NormalizerBiFunction {
     }
 
     @Override
-    public Object apply(Optional<String> s, Map<String, Object> m) throws InvalidInputFormatException {
-        if ("".equals(s.orElse(""))) return null;
+    public Object apply(String s, Map<String, Object> m) throws InvalidInputFormatException {
+        if ("".equals(s)) return null;
         return function.apply(s, m);
     }
 
