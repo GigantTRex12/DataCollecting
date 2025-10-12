@@ -1,7 +1,5 @@
 package testutils;
 
-import Utils.InputUtils;
-
 import java.io.ByteArrayInputStream;
 
 public class InputBuilder {

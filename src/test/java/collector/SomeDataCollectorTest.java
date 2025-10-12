@@ -5,6 +5,7 @@ import example.SomeDataCollector;
 import example.SomeDataSet;
 import exceptions.CollectorExceptionWrapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import testutils.InputBuilder;
 import testutils.TestWithOutputs;
@@ -21,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SomeDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
+    private static final String FIX = "fc";
     private static final String WHAT_DO = "What would you like to do?";
+    private static final String FIX_MSG = "Set the fixed answers. Leave empty to skip. Enter \\ for empty String.";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
 
     private SomeDataCollector collector;
@@ -37,11 +40,11 @@ public class SomeDataCollectorTest extends TestWithOutputs {
 
     private List<String> getContent() throws IOException {
         return Files.readAllLines(tempfile).stream()
-                .filter(s -> s.trim().length() > 0).collect(Collectors.toList());
+                .filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
     }
 
     @Test
-    void testSomeThings() throws CollectorExceptionWrapper, IOException {
+    void add() throws CollectorExceptionWrapper, IOException {
         // given
         InputBuilder.start()
                 .line(ADD)
@@ -96,6 +99,87 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO
+        });
+    }
+
+    @Disabled
+    @Test
+    void fixChoices() throws CollectorExceptionWrapper, IOException {
+        // given
+        InputBuilder.start()
+                .line(FIX)
+                .line("name")
+                .emptyLine()
+                .line("bla")
+                .line(ADD)
+                .line(50)
+                .line(ADD)
+                .line(3)
+                .line(FIX)
+                .emptyLine()
+                .line("NaN")
+                .line("blabla")
+                .line(ADD)
+                .line("name")
+                .line(15)
+                .line(FIX)
+                .emptyLine()
+                .line(20)
+                .line("\\")
+                .line(ADD)
+                .line("longname")
+                .line("e")
+                .set();
+
+        SomeDataSet expected1 = new SomeDataSet(METADATA_EXAMPLE, "name", 50, "Value is: bla");
+        SomeDataSet expected2 = new SomeDataSet(METADATA_EXAMPLE, "name", 3, null);
+        SomeDataSet expected3 = new SomeDataSet(METADATA_EXAMPLE, "name", 15, "Value is: blabla");
+        SomeDataSet expected4 = new SomeDataSet(METADATA_EXAMPLE, "longname", 20, "Value is: ");
+
+        // when
+        collector.collect();
+
+        // then
+        List<String> content = getContent();
+        assertEquals(4, content.size());
+        assertEquals(toJson(expected1), content.get(0));
+        assertEquals(toJson(expected2), content.get(1));
+        assertEquals(toJson(expected3), content.get(2));
+        assertEquals(toJson(expected4), content.get(3));
+
+        validateOutputs(new String[]{
+                WHAT_DO,
+                FIX_MSG,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "Enter some value",
+                WHAT_DO,
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                FIX_MSG,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "Enter some value",
+                WHAT_DO,
+                "Enter some name",
+                "Invalid input: Input needs to match pattern ^0$|^[1-9]\\d*$",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                FIX_MSG,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "Enter some value",
+                WHAT_DO,
+                "Enter some name",
                 WHAT_DO
         });
     }

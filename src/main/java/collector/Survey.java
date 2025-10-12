@@ -38,13 +38,14 @@ class Survey {
         for (final Question question : questions) {
             if (!question.condition().test(answers)) continue;
 
-            if (presetAnswers.containsKey(question)) {
-                String preset = presetAnswers.get(question);
+            String preset = presetAnswers.get(question);
+            if (preset != null) {
                 if (!validateAndPrintError(preset, question, answers)) presetAnswers.remove(question);
                 else {
                     try {
                         final Object normalized = question.normalizer().apply(preset, answers);
                         putInMap(answers, question.key(), (normalized instanceof Optional<?> t) ? t.orElse(null) : normalized);
+                        continue;
                     } catch (InvalidInputFormatException e) {
                         println("Invalid input: " + e.getMessage());
                         presetAnswers.remove(question);
@@ -70,7 +71,7 @@ class Survey {
         return answers;
     }
 
-    private static boolean validateAndPrintError(String input, Question question, Map<String, Object> answers) {
+    private boolean validateAndPrintError(String input, Question question, Map<String, Object> answers) {
         Optional<String> error = Optional.empty();
         if (question.multiline() && !input.isEmpty()) {
             for (String s : input.split(lineSeparator())) {
@@ -85,7 +86,7 @@ class Survey {
         return true;
     }
 
-    private static void putInMap(Map<String, Object> answers, String key, Object value) {
+    private void putInMap(Map<String, Object> answers, String key, Object value) {
         if (key.contains("&")) {
             if (!(value instanceof List<?> values))
                 throw new IllegalStateException("For multiple fields value has to be a List");
@@ -98,13 +99,11 @@ class Survey {
 
     void presetAnswers() {
         clearPresetAnswers();
+        println("Set the fixed answers. Leave empty to skip. Enter \\ for empty String.");
         for (final Question question : questions) {
-            while (true) {
-                final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
-                if (raw.isEmpty()) break;
-                else if (raw.equals("\\")) presetAnswers.put(question, "");
-                else presetAnswers.put(question, raw);
-            }
+            final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
+            if (raw.equals("\\")) presetAnswers.put(question, "");
+            else if (!raw.isEmpty()) presetAnswers.put(question, raw);
         }
     }
 

@@ -36,7 +36,7 @@ public class TestWithOutputs {
         int pos = 0;
         for (String expected : expectedOutputs) {
             if (expected != null) {
-                assertEquals(expected, output.get(pos));
+                assertEquals(expected, output.get(pos), "Output at position " + pos + "doesn't match.");
             }
             pos++;
         }

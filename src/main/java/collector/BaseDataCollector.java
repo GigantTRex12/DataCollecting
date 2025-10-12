@@ -41,23 +41,26 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     public void collect() throws CollectorExceptionWrapper {
         setMetadata();
-        boolean exit = false;
-        while (!exit) {
+        while (true) {
             String action = inputAction();
-            switch (action) {
-                case ("adddata") -> addData();
-                case ("cleardata") -> this.data.clear();
-                case ("save") -> saveData();
-                case ("printdata") -> printData();
-                case ("pickmetadata") -> setMetadata();
-                case ("fixchoices") -> fixChoices();
-                case ("clearfixedchoices") -> clearFixedChoices();
-                case ("exit") -> {
-                    saveData();
-                    exit = true;
-                }
-                default -> println("Unknown action: " + action);
+            if (action.equals("exit")) {
+                saveData();
+                break;
             }
+            executeAction(action);
+        }
+    }
+
+    protected void executeAction(String action) throws CollectorExceptionWrapper {
+        switch (action) {
+            case ("adddata") -> addData();
+            case ("cleardata") -> this.data.clear();
+            case ("save") -> saveData();
+            case ("printdata") -> printData();
+            case ("pickmetadata") -> setMetadata();
+            case ("fixchoices") -> fixChoices();
+            case ("clearfixedchoices") -> clearFixedChoices();
+            default -> println("Unknown action: " + action);
         }
     }
 
@@ -97,7 +100,6 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     protected abstract void saveData() throws CollectorExceptionWrapper;
 
-    // TODO: write tests for this
     private void fixChoices() {
         survey.presetAnswers();
     }
