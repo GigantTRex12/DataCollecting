@@ -1,5 +1,7 @@
 package testutils;
 
+import Utils.InputUtils;
+
 import java.io.ByteArrayInputStream;
 
 public class InputBuilder {
@@ -44,6 +46,7 @@ public class InputBuilder {
 
     public void set() {
         System.setIn(new ByteArrayInputStream(input.getBytes()));
+        InputUtils.resetReader();
     }
 
 }

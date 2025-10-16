@@ -5,7 +5,6 @@ import example.SomeDataCollector;
 import example.SomeDataSet;
 import exceptions.CollectorExceptionWrapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import testutils.InputBuilder;
 import testutils.TestWithOutputs;
@@ -103,7 +102,6 @@ public class SomeDataCollectorTest extends TestWithOutputs {
         });
     }
 
-    @Disabled
     @Test
     void fixChoices() throws CollectorExceptionWrapper, IOException {
         // given
