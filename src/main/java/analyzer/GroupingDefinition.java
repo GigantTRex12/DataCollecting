@@ -5,15 +5,21 @@ import java.util.function.Function;
 import static java.util.Objects.requireNonNull;
 
 public record GroupingDefinition<T>(
+        String name,
         Function<T, ?> function,
-        boolean forced,
-        boolean filter
+        boolean forced
 ) {
+
     public GroupingDefinition {
         requireNonNull(function);
     }
 
-    public GroupingDefinition(Function<T, ?> function) {
-        this(function, false, false);
+    public GroupingDefinition(String name, Function<T, ?> function) {
+        this(name, function, false);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

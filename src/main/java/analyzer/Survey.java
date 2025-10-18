@@ -2,17 +2,47 @@ package analyzer;
 
 import dataset.BaseDataSet;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-class Survey<T extends BaseDataSet> {
+import static Utils.InputUtils.input;
+import static java.lang.IO.println;
 
-    private final List<Question<T>> questions;
+class Survey {
 
-    public Survey(List<Question<T>> questions) {
-        this.questions = questions;
+    static <T extends BaseDataSet> void run(Question<T> question, List<T> data) {
+        List<String> groupReps = new ArrayList<>();
+        List<Function<T, ?>> groupings = new ArrayList<>();
+        for (GroupingDefinition<T> gd : question.groupings()) {
+            if (!gd.forced()) {
+                String f = input("Do you want to group by " + gd.name() + "? (y|yes)").toLowerCase();
+                if (!(f.equals("yes") || f.equals("y"))) continue;
+            }
+            // TODO: allow optional filter
+            groupReps.add(gd.toString());
+            groupings.add(gd.function());
+        }
+
+        Map<List<?>, List<T>> groupedData = data.stream()
+                .filter(question.conditionAll())
+                .collect(Collectors.groupingBy( t -> {
+                    List<Object> list = new ArrayList<>();
+                    groupings.forEach(g -> list.add(g.apply(t)));
+                    return list;
+                }));
+
+        groupedData.forEach((keys, values) -> {
+            println("Grouped Values:");
+            println(String.join(", ", groupReps));
+            println(keys.stream().map(Object::toString).collect(Collectors.joining(", ")));
+            question.evaluator().accept(values);
+        });
     }
 
-    void run() {
-        // TODO
+    private Survey() {
     }
+
 }

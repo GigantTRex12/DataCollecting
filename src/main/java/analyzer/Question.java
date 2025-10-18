@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
@@ -51,6 +52,16 @@ public record Question<T extends BaseDataSet>(
 
         public Builder<T> groupings(GroupingDefinition<T>... groupings) {
             this.groupings.addAll(Arrays.asList(groupings));
+            return this;
+        }
+
+        public Builder<T> groupingFunctions(List<Function<T, ?>> functions) {
+            this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f)).toList());
+            return this;
+        }
+
+        public Builder<T> groupingFunctions(Function<T, ?>... functions) {
+            this.groupings.addAll(Arrays.stream(functions).map(f -> new GroupingDefinition<>("Unknown", f)).toList());
             return this;
         }
 
