@@ -65,6 +65,16 @@ public record Question<T extends BaseDataSet>(
             return this;
         }
 
+        public Builder<T> forcedGrouping(List<Function<T, ?>> functions) {
+            this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f, true)).toList());
+            return this;
+        }
+
+        public Builder<T> forcedGrouping(Function<T, ?>... functions) {
+            this.groupings.addAll(Arrays.stream(functions).map(f -> new GroupingDefinition<>("Unknown", f, true)).toList());
+            return this;
+        }
+
         public Builder<T> conditionAll(Predicate<T> conditionAll) {
             this.conditionAll = conditionAll;
             return this;

@@ -35,10 +35,6 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         survey = new Survey(getQuestions());
     }
 
-    public Metadata getCurrMetadata() {
-        return currMetadata;
-    }
-
     public void collect() throws CollectorExceptionWrapper {
         setMetadata();
         while (true) {
@@ -93,7 +89,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     protected void printData() throws CollectorExceptionWrapper {
-        for (BaseDataSet data : data) {
+        for (T data : data) {
             println(data);
         }
     }
