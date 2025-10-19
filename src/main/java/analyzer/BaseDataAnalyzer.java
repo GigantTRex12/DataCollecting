@@ -1,13 +1,17 @@
 package analyzer;
 
+import Utils.Counter;
+import Utils.Utils;
 import dataset.BaseDataSet;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static Utils.InputUtils.input;
+import static java.lang.IO.print;
 import static java.lang.IO.println;
 import static java.util.Map.entry;
 
@@ -18,6 +22,8 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
             entry("p", "PrintData"),
             entry("e", "Exit")
     );
+
+    protected static final Consumer<List<?>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
 
     protected final List<T> data;
 
@@ -75,6 +81,15 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         for (T data : data) {
             println(data);
         }
+    }
+
+    private static <R> void percentageBasedConfidence(List<R> values) {
+        Counter<R> counter = new Counter<>(values);
+        int total = counter.sum();
+        counter.forEachNonZero((value, amount) -> print(
+                (value != null ? value.toString() : "null") + ": "
+                        + Utils.toBinomialConfidenceRange(amount, total, 0.95, 2)
+        ));
     }
 
 }

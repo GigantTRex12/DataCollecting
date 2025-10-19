@@ -35,14 +35,23 @@ public record Question<T extends BaseDataSet>(
 
     public static final class Builder<T extends BaseDataSet> {
         private final String name;
-        private final Consumer<List<T>> evaluator;
+        private Consumer<List<T>> evaluator;
         private List<GroupingDefinition<T>> groupings;
         private Predicate<T> conditionAll;
 
         public Builder(String name, Consumer<List<T>> evaluator) {
             this.name = name;
-            this.evaluator = evaluator;
             groupings = new ArrayList<>();
+        }
+
+        public Builder<T> evaluator(Consumer<List<T>> evaluator) {
+            this.evaluator = evaluator;
+            return this;
+        }
+
+        public <R> Builder<T> evaluator(Function<T, R> mapper, Consumer<List<R>> evaluator) {
+            this.evaluator = l -> evaluator.accept(l.stream().map(mapper).toList());
+            return this;
         }
 
         public Builder<T> groupings(List<GroupingDefinition<T>> groupings) {
