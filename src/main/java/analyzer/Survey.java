@@ -26,9 +26,13 @@ class Survey {
             groupings.add(gd.function());
         }
 
+        if (groupings.isEmpty()) {
+            question.evaluator().accept(data.stream().filter(question.conditionAll()).toList());
+            return;
+        }
         Map<List<?>, List<T>> groupedData = data.stream()
                 .filter(question.conditionAll())
-                .collect(Collectors.groupingBy( t -> {
+                .collect(Collectors.groupingBy(t -> {
                     List<Object> list = new ArrayList<>();
                     groupings.forEach(g -> list.add(g.apply(t)));
                     return list;
@@ -37,7 +41,7 @@ class Survey {
         groupedData.forEach((keys, values) -> {
             println("Grouped Values:");
             println(String.join(", ", groupReps));
-            println(keys.stream().map(Object::toString).collect(Collectors.joining(", ")));
+            println(keys.stream().map(String::valueOf).collect(Collectors.joining(", ")));
             question.evaluator().accept(values);
         });
     }

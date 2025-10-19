@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static Utils.InputUtils.input;
-import static java.lang.IO.print;
 import static java.lang.IO.println;
 import static java.util.Map.entry;
 
@@ -86,7 +85,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
     private static <R> void percentageBasedConfidence(List<R> values) {
         Counter<R> counter = new Counter<>(values);
         int total = counter.sum();
-        counter.forEachNonZero((value, amount) -> print(
+        counter.forEachNonZero((value, amount) -> println(
                 (value != null ? value.toString() : "null") + ": "
                         + Utils.toBinomialConfidenceRange(amount, total, 0.95, 2)
         ));

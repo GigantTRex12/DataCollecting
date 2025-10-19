@@ -29,8 +29,8 @@ public record Question<T extends BaseDataSet>(
         return name;
     }
 
-    public static <T extends BaseDataSet> Builder<T> ask(String name, Consumer<List<T>> evaluator) {
-        return new Builder<>(name, evaluator);
+    public static <T extends BaseDataSet> Builder<T> ask(String name, Class<T> c) {
+        return new Builder<>(name);
     }
 
     public static final class Builder<T extends BaseDataSet> {
@@ -39,7 +39,7 @@ public record Question<T extends BaseDataSet>(
         private List<GroupingDefinition<T>> groupings;
         private Predicate<T> conditionAll;
 
-        public Builder(String name, Consumer<List<T>> evaluator) {
+        public Builder(String name) {
             this.name = name;
             groupings = new ArrayList<>();
         }
@@ -49,7 +49,7 @@ public record Question<T extends BaseDataSet>(
             return this;
         }
 
-        public <R> Builder<T> evaluator(Function<T, R> mapper, Consumer<List<R>> evaluator) {
+        public Builder<T> evaluator(Function<T, ?> mapper, Consumer<List<?>> evaluator) {
             this.evaluator = l -> evaluator.accept(l.stream().map(mapper).toList());
             return this;
         }
@@ -64,6 +64,7 @@ public record Question<T extends BaseDataSet>(
             return this;
         }
 
+        // TODO: generate name instead of "Unknown" since names are not allowed to repeat
         public Builder<T> groupingFunctions(List<Function<T, ?>> functions) {
             this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f)).toList());
             return this;
