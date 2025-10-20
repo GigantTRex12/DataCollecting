@@ -61,4 +61,7 @@ public class StringUtils {
         return contains(strings.keySet(), option) || contains(strings.values(), option);
     }
 
+    private StringUtils() {
+    }
+
 }

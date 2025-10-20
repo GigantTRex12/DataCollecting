@@ -22,6 +22,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
             entry("e", "Exit")
     );
 
+    protected static final Consumer<List<?>> SIMPLE_PERCENTAGES = BaseDataAnalyzer::simplePercentages;
     protected static final Consumer<List<?>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
 
     protected final List<T> data;
@@ -82,10 +83,20 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         }
     }
 
+    private static <R> void simplePercentages(List<R> values) {
+        Counter<R> counter = new Counter<>(values);
+        int total = counter.sum();
+        counter.forEach((value, amount) -> println(
+                value + ": "
+                        + amount + "/" + total + " "
+                        + Utils.numbertoStringWithComma(Math.round((float) (10_000 * amount) / total), 2) + "%"
+        ));
+    }
+
     private static <R> void percentageBasedConfidence(List<R> values) {
         Counter<R> counter = new Counter<>(values);
         int total = counter.sum();
-        counter.forEachNonZero((value, amount) -> println(
+        counter.forEach((value, amount) -> println(
                 value + ": "
                         + Utils.toBinomialConfidenceRange(amount, total, 0.95, 2)
                         + " (" + amount + "/" + total + ")"
