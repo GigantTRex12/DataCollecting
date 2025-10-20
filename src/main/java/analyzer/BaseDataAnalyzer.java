@@ -86,8 +86,9 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         Counter<R> counter = new Counter<>(values);
         int total = counter.sum();
         counter.forEachNonZero((value, amount) -> println(
-                (value != null ? value.toString() : "null") + ": "
+                value + ": "
                         + Utils.toBinomialConfidenceRange(amount, total, 0.95, 2)
+                        + " (" + amount + "/" + total + ")"
         ));
     }
 

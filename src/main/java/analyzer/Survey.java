@@ -39,7 +39,7 @@ class Survey {
                 }));
 
         groupedData.forEach((keys, values) -> {
-            println("Grouped Values:");
+            println(values.size() + " grouped Datasets with:");
             println(String.join(", ", groupReps));
             println(keys.stream().map(String::valueOf).collect(Collectors.joining(", ")));
             question.evaluator().accept(values);
