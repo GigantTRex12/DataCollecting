@@ -60,7 +60,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         }
     }
 
-    private void addData() throws CollectorExceptionWrapper {
+    protected void addData() throws CollectorExceptionWrapper {
         Map<String, Object> typeMap = survey.run();
         T dataSet = mapToDataset(typeMap);
         if (validateDataSet(dataSet)) {
@@ -94,11 +94,11 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     protected abstract void saveData() throws CollectorExceptionWrapper;
 
-    private void fixChoices() {
+    protected void fixChoices() {
         survey.presetAnswers();
     }
 
-    private void clearFixedChoices() {
+    protected void clearFixedChoices() {
         survey.clearPresetAnswers();
     }
 

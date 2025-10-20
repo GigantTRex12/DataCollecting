@@ -14,7 +14,7 @@ public class InputUtils {
     private static BufferedReader br;
 
     /**
-     * Reads one line of console input
+     * Reads one line of console input.
      */
     public static String input() {
         try {
@@ -25,7 +25,7 @@ public class InputUtils {
     }
 
     /**
-     * Prints the message then reads the next line of console input
+     * Prints the message then reads the next line of console input.
      */
     public static String input(String message) {
         println(message);
@@ -33,7 +33,7 @@ public class InputUtils {
     }
 
     /**
-     * Reads lines of console input until an empty line is entered
+     * Reads lines of console input until an empty line is entered.
      */
     public static String multilineInput() {
         String line = readln();
@@ -50,7 +50,7 @@ public class InputUtils {
     }
 
     /**
-     * Prints the message then reads following lines of console input until an empty line is entered
+     * Prints the message then reads following lines of console input until an empty line is entered.
      */
     public static String multilineInput(String message) {
         println(message);
@@ -70,8 +70,8 @@ public class InputUtils {
     }
 
     /**
-     * Resets the Reader used by input()
-     * Used when manually setting console inputs with {@link System#setIn(InputStream)} for example in tests
+     * Resets the Reader used by input().
+     * Used when manually setting console inputs with {@link System#setIn(InputStream)} for example in tests.
      */
     public static void resetReader() {
         br = null;

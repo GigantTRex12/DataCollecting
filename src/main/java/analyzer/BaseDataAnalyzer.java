@@ -53,7 +53,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
 
     protected abstract List<Question<T>> getQuestions();
 
-    private void analyzation() {
+    protected void analyzation() {
         String o = "Choose what to analyze. Options:" + System.lineSeparator();
         o += questions.stream().map(Question::toString).collect(Collectors.joining(", "));
         while (true) {

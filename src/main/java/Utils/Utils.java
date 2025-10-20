@@ -6,10 +6,10 @@ import org.apache.commons.math3.stat.interval.WilsonScoreInterval;
 public class Utils {
 
     /**
-     * Calculates the Willson Score Interval
+     * Calculates the Willson Score Interval.
      * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
-     * @param digits Number of digits to round to (after converting to percentage)
-     *               Defaults to rounding to whole number if digits is non-positive
+     * @param digits Number of digits to round to (after converting to percentage).
+     *               Defaults to rounding to whole number if digits is non-positive.
      * @return String representing the Wilson Score Interval with Format ['lowerBoundaryInPercent'% - 'upperBoundaryInPercent'%]
      */
     public static String toBinomialConfidenceRange(int successes, int sampleSize, double confidence, int digits) {
@@ -21,10 +21,10 @@ public class Utils {
     }
 
     /**
-     * Formats a number to an Integer or Floating-Point Number String representation
-     * @param digits Amount of digits to move the decimal point by
-     *               Defaults to 0 if negative
-     * @return The formatted number as String
+     * Formats a number to an Integer or Floating-Point Number String representation.
+     * @param digits Amount of digits to move the decimal point by.
+     *               Defaults to 0 if negative.
+     * @return The formatted number as String.
      */
     public static String numbertoStringWithComma(long number, int digits) {
         if (digits <= 0) return String.valueOf(number);
