@@ -6,12 +6,6 @@ public class SomeDataSet extends AbstractDataSet {
     private final int number;
     private final String someValue;
 
-    public SomeDataSet() {
-        name = null;
-        number = 0;
-        someValue = null;
-    }
-
     public SomeDataSet(MetadataExample metadataexample, String name, int number, String someValue) {
         super(metadataexample);
         this.name = name;
@@ -30,4 +24,5 @@ public class SomeDataSet extends AbstractDataSet {
     public String getSomeValue() {
         return someValue;
     }
+
 }

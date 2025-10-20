@@ -4,12 +4,13 @@ import collector.Question;
 import exceptions.CollectorExceptionWrapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
 
     public SomeDataCollector(String filename) {
-        super(filename, SomeDataSet.class);
+        super(filename);
     }
 
     @Override
@@ -28,6 +29,16 @@ public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
                         .when(m -> (int) m.get("number") >= 10)
                         .normalize((s, _) -> "Value is: " + s)
                         .build()
+        );
+    }
+
+    @Override
+    protected SomeDataSet mapToDataset(Map<String, Object> map) throws CollectorExceptionWrapper {
+        return new SomeDataSet(
+                (MetadataExample) currMetadata,
+                (String) map.get("name"),
+                (Integer) map.get("number"),
+                (String) map.get("someValue")
         );
     }
 

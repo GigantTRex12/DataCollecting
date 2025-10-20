@@ -61,7 +61,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     private void addData() throws CollectorExceptionWrapper {
-        Map<String, Object> typeMap = survey.run(currMetadata);
+        Map<String, Object> typeMap = survey.run();
         T dataSet = mapToDataset(typeMap);
         if (validateDataSet(dataSet)) {
             this.data.add(dataSet);
@@ -69,8 +69,6 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     protected abstract List<Question> getQuestions();
-
-    protected abstract Class<? extends T> getGenericClass() throws CollectorExceptionWrapper;
 
     protected boolean validateDataSet(BaseDataSet dataSet) throws CollectorExceptionWrapper {
         return true;

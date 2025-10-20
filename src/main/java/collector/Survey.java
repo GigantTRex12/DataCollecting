@@ -1,6 +1,5 @@
 package collector;
 
-import dataset.Metadata;
 import exceptions.InvalidInputFormatException;
 
 import java.util.*;
@@ -30,11 +29,8 @@ class Survey {
      *
      * @return a map of keys to validated, normalized user answers
      */
-    Map<String, Object> run(Metadata metadata) {
+    Map<String, Object> run() {
         final Map<String, Object> answers = new HashMap<>();
-        if (metadata != null) {
-            answers.put(metadata.getClass().getSimpleName().toLowerCase(), metadata);
-        }
         for (final Question question : questions) {
             if (!question.condition().test(answers)) continue;
 

@@ -6,7 +6,8 @@ public class MapDataSet extends BaseDataSet {
 
     protected final Map<String, Object> map;
 
-    public MapDataSet(Map<String, Object> map) {
+    public MapDataSet(Metadata metadata, Map<String, Object> map) {
+        super(metadata);
         this.map = map;
     }
 

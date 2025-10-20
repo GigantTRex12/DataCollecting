@@ -15,9 +15,4 @@ public class JsonUtils {
         }
     }
 
-    public static <T> T parseJson(String json, Class<T> clazz) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, clazz);
-    }
-
 }
