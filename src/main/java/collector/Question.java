@@ -1,17 +1,13 @@
 package collector;
 
-import java.util.Map;
-import java.util.Optional;
+import Utils.StringUtils;
 import exceptions.InvalidInputFormatException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import static Utils.StringUtils.contains;
-import static Utils.StringUtils.join;
 import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 
@@ -24,7 +20,8 @@ public record Question(
         String key, // use "&" for multiple values in one question
         String prompt,
         Predicate<Map<String, Object>> condition,
-        BiFunction<String, Map<String, Object>, Optional<String>> validator, // on multilines this validates each line separately
+        BiFunction<String, Map<String, Object>, Optional<String>> validator,
+        // on multilines this validates each line separately
         NormalizerBiFunction normalizer,
         boolean multiline
 ) {
@@ -96,19 +93,20 @@ public record Question(
 
         public Builder options(String[] options) {
             validator = (s, _) -> {
-                if (contains(options, s)) return Optional.empty();
+                if (Arrays.stream(options).anyMatch(a -> a.equalsIgnoreCase(s))) return Optional.empty();
                 else return Optional.of("Input needs to be one of the given options");
             };
-            conditionPrompt = "Options: " + join(options, ", ");
+            conditionPrompt = "Options: " + String.join(", ", options);
             return this;
         }
 
         public Builder options(String[] options1, String[] options2) {
             validator = (s, _) -> {
-                if (contains(options1, s) || contains(options2, s)) return Optional.empty();
+                if (Arrays.stream(options1).anyMatch(a -> a.equalsIgnoreCase(s))
+                        || Arrays.stream(options2).anyMatch(a -> a.equalsIgnoreCase(s))) return Optional.empty();
                 else return Optional.of("Input needs to be one of the given options");
             };
-            conditionPrompt = "Options: " + join(options1, options2, ", ");
+            conditionPrompt = "Options: " + StringUtils.join(options1, options2, ", ");
             return this;
         }
 

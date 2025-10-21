@@ -1,18 +1,23 @@
 package example;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import dataset.Metadata;
 
 public class JsonUtils {
 
-    public static String toJson(Object object) {
-        ObjectMapper om = new ObjectMapper();
-        try {
-            return om.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
+    public static String toJson(AbstractDataSet data) {
+        String rep = "{\"" + toJson(data.getMetadata());
+        if (data instanceof SomeDataSet someDataSet) {
+            rep += ",\"name\":\"" + someDataSet.getName() + ",\"number\":" + someDataSet.getNumber() + ",\"someValue:\"" + someDataSet.getSomeValue();
         }
+        return rep + "}";
+    }
+
+    public static String toJson(Metadata metadata) {
+        String rep = "{";
+        if (metadata instanceof MetadataExample metadataExample) {
+            rep += "\"description\":" + metadataExample.getDescription();
+        }
+        return rep + "}";
     }
 
 }
