@@ -12,7 +12,7 @@ import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a single survey question definition for collecting data including.
+ * Represents a single survey Question definition for collecting data.
  * Encapsulates all logic for asking and processing user input without relying on reflection.
  *
  * @param key        The name of the property that is resulting of this Question and the key in the resulting key-value map.

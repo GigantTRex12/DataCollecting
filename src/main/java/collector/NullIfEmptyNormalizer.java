@@ -4,11 +4,11 @@ import exceptions.InvalidInputFormatException;
 
 import java.util.Map;
 
-public class NullIfEmptyNormalizer implements NormalizerBiFunction {
+class NullIfEmptyNormalizer implements NormalizerBiFunction {
 
     private final NormalizerBiFunction function;
 
-    public NullIfEmptyNormalizer(NormalizerBiFunction function) {
+    NullIfEmptyNormalizer(NormalizerBiFunction function) {
         this.function = function;
     }
 

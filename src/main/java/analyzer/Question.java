@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a single survey question definition for analyzing data.
+ * Represents a single survey Question definition for analyzing data.
  * Encapsulates all logic for asking and processing user input without relying on reflection.
  *
  * @param name         String representation for this Question.

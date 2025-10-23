@@ -14,6 +14,11 @@ import static Utils.InputUtils.input;
 import static java.lang.IO.println;
 import static java.util.Map.entry;
 
+/**
+ * Class for Analyzing existing Data.
+ * Provides static evaluators for subclasses.
+ * @param <T> Type of Data to Analyze
+ */
 public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
 
     private static final Map<String, String> actions = Map.ofEntries(
@@ -22,7 +27,14 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
             entry("e", "Exit")
     );
 
+    /**
+     * Takes a List of Objects and prints the String representation together with its percentage in the List.
+     */
     protected static final Consumer<List<Object>> SIMPLE_PERCENTAGES = BaseDataAnalyzer::simplePercentages;
+    /**
+     * Takes a List of Objects and prints the String representation together with the Wilson Score confidence interval with a confidence of 0.95.
+     * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
+     */
     protected static final Consumer<List<Object>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
 
     protected final List<T> data;
@@ -39,6 +51,11 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         }
     }
 
+    /**
+     * Starts up the Analyzer and presents the user with the choice of these actions:
+     * analyze; printData; exit.
+     * Performs the chosen action and loops back to the choice.
+     */
     public void analyze() {
         while (true) {
             String action = inputAction();
@@ -51,8 +68,15 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         }
     }
 
+    /**
+     * Provides the Questions used by this Analyzer.
+     * Each Question represents one possible way to analyze the given Data.
+     */
     protected abstract List<Question<T>> getQuestions();
 
+    /**
+     * The actual analysis.
+     */
     protected void analyzation() {
         String o = "Choose what to analyze. Options:" + System.lineSeparator();
         o += questions.stream().map(Question::toString).collect(Collectors.joining(", "));
@@ -72,11 +96,17 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
 
     }
 
+    /**
+     * Method of inputting the action to choose in {@link BaseDataAnalyzer#analyze()}
+     */
     protected String inputAction() {
         String action = input("What would you like to do?").toLowerCase();
         return actions.getOrDefault(action, action).toLowerCase();
     }
 
+    /**
+     * Prints all DataSets with 1 per line.
+     */
     protected void printData() {
         for (T data : data) {
             println(data);
