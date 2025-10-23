@@ -11,6 +11,16 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Represents a single survey question definition for analyzing data.
+ * Encapsulates all logic for asking and processing user input without relying on reflection.
+ *
+ * @param name         String representation for this Question.
+ * @param groupings    Functions allowing to group the DataSets before evaluating, see {@link GroupingDefinition}.
+ * @param evaluator    Consumer that takes a List of DataSets, does logical analyzation and outputs it in some way.
+ * @param conditionAll Filter condition, any DataSet that doesn't fill the condition is ignored
+ * @param <T>          Type of {@link BaseDataSet} that can be analyzed with this Question.
+ */
 public record Question<T extends BaseDataSet>(
         String name,
         List<GroupingDefinition<T>> groupings,
@@ -33,6 +43,11 @@ public record Question<T extends BaseDataSet>(
         return new Builder<>(name);
     }
 
+    /**
+     * Builder for creating {@link Question} instances.
+     *
+     * @param <T> Type parametetr of the Question to create.
+     */
     public static final class Builder<T extends BaseDataSet> {
         private final String name;
         private Consumer<List<T>> evaluator;
@@ -49,7 +64,13 @@ public record Question<T extends BaseDataSet>(
             return this;
         }
 
-        public Builder<T> evaluator(Function<T, ?> mapper, Consumer<List<?>> evaluator) {
+        /**
+         * Allows easy creation of an evaluator out of two parts.
+         *
+         * @param mapper    Function that maps each DataSet to some Object.
+         * @param evaluator Function that takes the List of Objects each DataSet has been mapped to.
+         */
+        public <R> Builder<T> evaluator(Function<T, R> mapper, Consumer<List<R>> evaluator) {
             this.evaluator = l -> evaluator.accept(l.stream().map(mapper).toList());
             return this;
         }
@@ -65,21 +86,34 @@ public record Question<T extends BaseDataSet>(
         }
 
         // TODO: generate name instead of "Unknown" since names are not allowed to repeat
+
+        /**
+         * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = false)
+         */
         public Builder<T> groupingFunctions(List<Function<T, ?>> functions) {
             this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f)).toList());
             return this;
         }
 
+        /**
+         * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = false)
+         */
         public Builder<T> groupingFunctions(Function<T, ?>... functions) {
             this.groupings.addAll(Arrays.stream(functions).map(f -> new GroupingDefinition<>("Unknown", f)).toList());
             return this;
         }
 
+        /**
+         * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = true)
+         */
         public Builder<T> forcedGrouping(List<Function<T, ?>> functions) {
             this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f, true)).toList());
             return this;
         }
 
+        /**
+         * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = true)
+         */
         public Builder<T> forcedGrouping(Function<T, ?>... functions) {
             this.groupings.addAll(Arrays.stream(functions).map(f -> new GroupingDefinition<>("Unknown", f, true)).toList());
             return this;

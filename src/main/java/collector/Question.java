@@ -12,12 +12,18 @@ import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents a single survey question definition including prompt, key, condition,
- * validator, and normalizer. Encapsulates all logic for asking and processing
- * user input without relying on reflection.
+ * Represents a single survey question definition for collecting data including.
+ * Encapsulates all logic for asking and processing user input without relying on reflection.
+ *
+ * @param key        The name of the property that is resulting of this Question and the key in the resulting key-value map.
+ * @param prompt     The prompt printed for this question.
+ * @param condition  A condition for the key-value map, allowing to skip this Question depending on previous Questions.
+ * @param validator  Validates user input. Return an empty Optional for valid inputs and Optional containing an error message otherwise.
+ * @param normalizer Function parsing the user input into an Object to be put in the key-value map.
+ * @param multiline  Wether to allow multiple lines of input. If true lets user make inputs until an empty line is input.
  */
 public record Question(
-        String key, // use "&" for multiple values in one question
+        String key, // use "&" for multiple values in one question // TODO: probably move this logic into normalizer
         String prompt,
         Predicate<Map<String, Object>> condition,
         BiFunction<String, Map<String, Object>, Optional<String>> validator,
@@ -38,8 +44,7 @@ public record Question(
     }
 
     /**
-     * Builder for creating {@link Question} instances with optional condition,
-     * validation and normalization logic.
+     * Builder for creating {@link Question} instances.
      */
     public static final class Builder {
         private final String key;
@@ -82,6 +87,9 @@ public record Question(
             return this;
         }
 
+        /**
+         * Makes the resulting Question require the user input to match the given regex and adjusts the prompt.
+         */
         public Builder regex(final String regex) {
             validator = (s, _) -> {
                 if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(s).find()) return Optional.empty();
@@ -91,6 +99,9 @@ public record Question(
             return this;
         }
 
+        /**
+         * Forces the user input to be one of the given options (case-insensitive) and adjusts the prompt.
+         */
         public Builder options(String[] options) {
             validator = (s, _) -> {
                 if (Arrays.stream(options).anyMatch(a -> a.equalsIgnoreCase(s))) return Optional.empty();
@@ -100,6 +111,9 @@ public record Question(
             return this;
         }
 
+        /**
+         * Forces the user input to be one of the given options from either array (case-insensitive) and adjusts the prompt.
+         */
         public Builder options(String[] options1, String[] options2) {
             validator = (s, _) -> {
                 if (Arrays.stream(options1).anyMatch(a -> a.equalsIgnoreCase(s))
@@ -110,7 +124,10 @@ public record Question(
             return this;
         }
 
-        // only use after setting a validator/normalizer
+        /**
+         * Always turn an empty String to null and allow empty user input.
+         * Set validator and normalizer before this.
+         */
         public Builder emptyToNull() {
             validator = validator == null ? null : new EmptyIfEmptyBiFunction(validator);
             if (normalizer == null) normalizer = (answer, _) -> answer.strip();
@@ -138,6 +155,9 @@ public record Question(
             return this;
         }
 
+        /**
+         * Don't validate user input. Useful to generate prompt for regex or options without enforcing them.
+         */
         public Builder dontValidate() {
             this.validator = null;
             return this;

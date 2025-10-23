@@ -22,8 +22,8 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
             entry("e", "Exit")
     );
 
-    protected static final Consumer<List<?>> SIMPLE_PERCENTAGES = BaseDataAnalyzer::simplePercentages;
-    protected static final Consumer<List<?>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
+    protected static final Consumer<List<Object>> SIMPLE_PERCENTAGES = BaseDataAnalyzer::simplePercentages;
+    protected static final Consumer<List<Object>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
 
     protected final List<T> data;
 
