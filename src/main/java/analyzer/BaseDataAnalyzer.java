@@ -17,6 +17,7 @@ import static java.util.Map.entry;
 /**
  * Class for Analyzing existing Data. Subclasses can override any relevant methods.
  * Provides static evaluators for subclasses.
+ *
  * @param <T> Type of Data to Analyze
  */
 public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
@@ -33,6 +34,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
     protected static final Consumer<List<Object>> SIMPLE_PERCENTAGES = BaseDataAnalyzer::simplePercentages;
     /**
      * Takes a List of Objects and prints the String representation together with the Wilson Score confidence interval with a confidence of 0.95.
+     *
      * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
      */
     protected static final Consumer<List<Object>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
@@ -97,7 +99,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
     }
 
     /**
-     * Method of inputting the action to choose in {@link BaseDataAnalyzer#analyze()}
+     * Method of inputting the action to choose in {@link BaseDataAnalyzer#analyze()}.
      */
     protected String inputAction() {
         String action = input("What would you like to do?").toLowerCase();
