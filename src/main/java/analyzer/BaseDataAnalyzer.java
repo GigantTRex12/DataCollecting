@@ -15,7 +15,7 @@ import static java.lang.IO.println;
 import static java.util.Map.entry;
 
 /**
- * Class for Analyzing existing Data.
+ * Class for Analyzing existing Data. Subclasses can override any relevant methods.
  * Provides static evaluators for subclasses.
  * @param <T> Type of Data to Analyze
  */

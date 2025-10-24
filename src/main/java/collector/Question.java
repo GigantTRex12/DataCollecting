@@ -46,16 +46,16 @@ public record Question(
     /**
      * Builder for creating {@link Question} instances.
      */
-    public static final class Builder {
+    public static class Builder {
         private final String key;
         private final String prompt;
-        private Predicate<Map<String, Object>> condition;
-        private BiFunction<String, Map<String, Object>, Optional<String>> validator;
-        private NormalizerBiFunction normalizer;
-        private boolean multiline = false;
-        private String conditionPrompt;
+        protected Predicate<Map<String, Object>> condition;
+        protected BiFunction<String, Map<String, Object>, Optional<String>> validator;
+        protected NormalizerBiFunction normalizer;
+        protected boolean multiline = false;
+        protected String conditionPrompt;
 
-        private Builder(final String key, final String prompt) {
+        protected Builder(final String key, final String prompt) {
             this.key = key;
             this.prompt = prompt;
         }

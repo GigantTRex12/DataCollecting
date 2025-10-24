@@ -48,13 +48,13 @@ public record Question<T extends BaseDataSet>(
      *
      * @param <T> Type parametetr of the Question to create.
      */
-    public static final class Builder<T extends BaseDataSet> {
+    public static class Builder<T extends BaseDataSet> {
         private final String name;
-        private Consumer<List<T>> evaluator;
-        private List<GroupingDefinition<T>> groupings;
-        private Predicate<T> conditionAll;
+        protected Consumer<List<T>> evaluator;
+        protected List<GroupingDefinition<T>> groupings;
+        protected Predicate<T> conditionAll;
 
-        public Builder(String name) {
+        protected Builder(String name) {
             this.name = name;
             groupings = new ArrayList<>();
         }
