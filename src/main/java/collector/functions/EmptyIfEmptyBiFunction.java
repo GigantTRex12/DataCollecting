@@ -1,14 +1,14 @@
-package collector;
+package collector.functions;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-class EmptyIfEmptyBiFunction implements BiFunction<String, Map<String, Object>, Optional<String>> {
+public class EmptyIfEmptyBiFunction implements BiFunction<String, Map<String, Object>, Optional<String>> {
 
     private final BiFunction<String, Map<String, Object>, Optional<String>> function;
 
-    EmptyIfEmptyBiFunction(BiFunction<String, Map<String, Object>, Optional<String>> function) {
+    public EmptyIfEmptyBiFunction(BiFunction<String, Map<String, Object>, Optional<String>> function) {
         this.function = function;
     }
 

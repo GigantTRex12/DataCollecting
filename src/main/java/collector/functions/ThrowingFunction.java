@@ -1,4 +1,4 @@
-package collector;
+package collector.functions;
 
 /**
  * Functional Interface that allows Throwing a specified checked Exception

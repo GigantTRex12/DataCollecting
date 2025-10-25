@@ -1,7 +1,6 @@
 package example;
 
 import collector.Question;
-import exceptions.CollectorExceptionWrapper;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
     }
 
     @Override
-    protected SomeDataSet mapToDataset(Map<String, Object> map) throws CollectorExceptionWrapper {
+    protected SomeDataSet mapToDataset(Map<String, Object> map) {
         return new SomeDataSet(
                 (MetadataExample) currMetadata,
                 (String) map.get("name"),

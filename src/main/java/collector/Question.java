@@ -1,6 +1,10 @@
 package collector;
 
 import Utils.StringUtils;
+import collector.functions.EmptyIfEmptyBiFunction;
+import collector.functions.NormalizerBiFunction;
+import collector.functions.NullIfEmptyNormalizer;
+import collector.functions.ThrowingFunction;
 import exceptions.InvalidInputFormatException;
 
 import java.util.*;

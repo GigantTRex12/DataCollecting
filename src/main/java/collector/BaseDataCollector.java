@@ -2,7 +2,6 @@ package collector;
 
 import dataset.BaseDataSet;
 import dataset.Metadata;
-import exceptions.CollectorExceptionWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * addData; clearData; save; printData; pickMetadata; fixChoices; clearFixedChoices; exit.
      * Performs the chosen action and loops back to the choice.
      */
-    public void collect() throws CollectorExceptionWrapper {
+    public void collect() {
         setMetadata();
         while (true) {
             String action = inputAction();
@@ -57,10 +56,10 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         }
     }
 
-    protected void executeAction(String action) throws CollectorExceptionWrapper {
+    protected void executeAction(String action) {
         switch (action) {
             case ("adddata") -> addData();
-            case ("cleardata") -> this.data.clear();
+            case ("cleardata") -> clearData();
             case ("save") -> saveData();
             case ("printdata") -> printData();
             case ("pickmetadata") -> setMetadata();
@@ -73,7 +72,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     /**
      * Runs a Survey of Questions, requesting user input to create a new DataSet and save it.
      */
-    protected void addData() throws CollectorExceptionWrapper {
+    protected void addData() {
         Map<String, Object> typeMap = survey.run();
         T dataSet = mapToDataset(typeMap);
         if (validateDataSet(dataSet)) {
@@ -90,7 +89,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Called before adding a new DataSet to validate it.
      * If this returns false for a DataSet the DataSet will be discarded.
      */
-    protected boolean validateDataSet(BaseDataSet dataSet) throws CollectorExceptionWrapper {
+    protected boolean validateDataSet(BaseDataSet dataSet) {
         return true;
     }
 
@@ -98,7 +97,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Called to transform a key-value Map with Strings as keys into the corresponding DataSet.
      * The keys are the Strings given as key in the {@link Question}.
      */
-    protected abstract T mapToDataset(Map<String, Object> map) throws CollectorExceptionWrapper;
+    protected abstract T mapToDataset(Map<String, Object> map);
 
     /**
      * Used to set the Metadata this Collector remembers and may add to created DataSets.
@@ -106,14 +105,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Is always called once on starting up the Collector with {@link BaseDataCollector#collect()}.
      * May use user input to create the Metadata.
      */
-    protected void setMetadata() throws CollectorExceptionWrapper {
+    protected void setMetadata() {
         currMetadata = null;
     }
 
     /**
      * Method of inputting the action to choose in {@link BaseDataCollector#collect()}.
      */
-    protected String inputAction() throws CollectorExceptionWrapper {
+    protected String inputAction() {
         String action = input("What would you like to do?").toLowerCase();
         return actions.getOrDefault(action, action).toLowerCase();
     }
@@ -121,7 +120,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     /**
      * Prints all collected and unsaved DataSets with 1 per line.
      */
-    protected void printData() throws CollectorExceptionWrapper {
+    protected void printData() {
         for (T data : data) {
             println(data);
         }
@@ -129,8 +128,18 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     /**
      * Called when the "save" action is executed.
+     * <br>
+     * When implementing this should end with a call of {@link BaseDataCollector#clearData()} on success
      */
-    protected abstract void saveData() throws CollectorExceptionWrapper;
+    protected abstract void saveData();
+
+    /**
+     * Simply removes all unsaved collected data.
+     * May be overridden to for example add extra validation.
+     */
+    protected void clearData() {
+        this.data.clear();
+    }
 
     /**
      * Goes through all Questions and lets the user optionally input responses to those Questions that will automatically be used when the Question would otherwise be asked.

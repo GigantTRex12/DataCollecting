@@ -1,7 +1,6 @@
 package example;
 
 import collector.BaseDataCollector;
-import exceptions.CollectorExceptionWrapper;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -20,13 +19,15 @@ public abstract class AbstractDataCollector<T extends AbstractDataSet> extends B
     }
 
     @Override
-    protected void saveData() throws CollectorExceptionWrapper {
+    protected void saveData() {
         String jsons = data.stream().map(JsonUtils::toJson).collect(Collectors.joining(System.lineSeparator()));
         try {
             FileUtils.append(filename, jsons);
         } catch (IOException e) {
-            throw new CollectorExceptionWrapper(e);
+            IO.println("Failed to save data: " + e.getMessage());
+            return;
         }
+        data.clear();
     }
 
 }

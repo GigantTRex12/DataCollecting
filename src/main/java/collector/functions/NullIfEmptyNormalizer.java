@@ -1,14 +1,14 @@
-package collector;
+package collector.functions;
 
 import exceptions.InvalidInputFormatException;
 
 import java.util.Map;
 
-class NullIfEmptyNormalizer implements NormalizerBiFunction {
+public class NullIfEmptyNormalizer implements NormalizerBiFunction {
 
     private final NormalizerBiFunction function;
 
-    NullIfEmptyNormalizer(NormalizerBiFunction function) {
+    public NullIfEmptyNormalizer(NormalizerBiFunction function) {
         this.function = function;
     }
 

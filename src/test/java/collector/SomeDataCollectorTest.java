@@ -3,7 +3,6 @@ package collector;
 import example.MetadataExample;
 import example.SomeDataCollector;
 import example.SomeDataSet;
-import exceptions.CollectorExceptionWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import testutils.InputBuilder;
@@ -43,7 +42,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
     }
 
     @Test
-    void add() throws CollectorExceptionWrapper, IOException {
+    void add() throws IOException {
         // given
         InputBuilder.start()
                 .line(ADD)
@@ -103,7 +102,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
     }
 
     @Test
-    void fixChoices() throws CollectorExceptionWrapper, IOException {
+    void fixChoices() throws IOException {
         // given
         InputBuilder.start()
                 .line(FIX)
