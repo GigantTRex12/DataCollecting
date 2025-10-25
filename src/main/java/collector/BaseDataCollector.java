@@ -94,8 +94,6 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         return true;
     }
 
-    // TODO: should have default implementation
-
     /**
      * Called to transform a key-value Map with Strings as keys into the corresponding DataSet.
      * The keys are the Strings given as key in the {@link Question}.
