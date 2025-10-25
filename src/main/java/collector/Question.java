@@ -90,7 +90,8 @@ public record Question(
 
         /**
          * Transforms the parser into a {@link NormalizerBiConsumer}.
-         * For normalizer with multiple keys use {@link Builder#normalizers(ThrowingFunction[])} instead.
+         * <br>
+         * For normalizer with multiple keys use {@link Builder#normalizers(Map)} instead.
          */
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
             this.normalizer = (answer, map) -> map.put(key, parser.apply(answer.strip()));
@@ -137,26 +138,31 @@ public record Question(
         /**
          * Always turn an empty String to null and allow empty user input.
          * Set validator and normalizer before this.
+         * <br>
+         * Only works for single keys, for multiple keys use {@link Builder#normalizers(Map)} instead.
          */
         public Builder emptyToNull() {
             validator = validator == null ? null : new EmptyIfEmptyBiFunction(validator);
-
-            return this;
-        }
-
-        /**
-         * Merges multiple {@link NormalizerBiConsumer} into one.
-         */
-        public Builder normalizers(final NormalizerBiConsumer... normalizers) {
-
+            normalizer = normalizer == null ?
+                    ((s, m) -> m.put(key, s.isEmpty() ? null : s)) :
+                    ((s, m) -> {
+                        if (s.isEmpty()) m.put(key, null);
+                        else normalizer.apply(s, m);
+                    });
             return this;
         }
 
         /**
          * Merges multiple parsers into one {@link NormalizerBiConsumer}.
+         *
+         * @param parsers A map where each key is mapped to the function parsing the input into the value for that key.
          */
-        public Builder normalizers(final ThrowingFunction<String, Object, InvalidInputFormatException>... parsers) {
-
+        public Builder normalizers(final Map<String, ThrowingFunction<String, Object, InvalidInputFormatException>> parsers) {
+            normalizer = (answer, map) -> {
+                for (String key : parsers.keySet()) {
+                    map.put(key, parsers.get(key).apply(answer));
+                }
+            };
             return this;
         }
 
