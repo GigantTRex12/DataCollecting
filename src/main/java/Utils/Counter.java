@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 /**
  * HashMap with Objects (elements) as key and their frequency as value.
  * Negative values are allowed.
- * Values of 0 act as non-existent for all relevant purposes and {@link java.util.Map#get(Object)} defaults to 0 instead of null.
+ * {@link java.util.Map#get(Object)} defaults to 0 instead of null.
  * Values of 0 are ignored by {@link java.util.Map#forEach(BiConsumer)} and {@link Map#isEmpty()}.
  * @param <T> Type of Objects to count
  */

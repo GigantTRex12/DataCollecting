@@ -53,10 +53,12 @@ public record Question<T extends BaseDataSet>(
         protected Consumer<List<T>> evaluator;
         protected List<GroupingDefinition<T>> groupings;
         protected Predicate<T> conditionAll;
+        private int count;
 
         protected Builder(String name) {
             this.name = name;
             groupings = new ArrayList<>();
+            count = 0;
         }
 
         public Builder<T> evaluator(Consumer<List<T>> evaluator) {
@@ -85,13 +87,14 @@ public record Question<T extends BaseDataSet>(
             return this;
         }
 
-        // TODO: generate name instead of "Unknown" since names are not allowed to repeat
-
         /**
          * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = false)
          */
         public Builder<T> groupingFunctions(List<Function<T, ?>> functions) {
-            this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f)).toList());
+            this.groupings.addAll(functions.stream().map(f -> {
+                count++;
+                return new GroupingDefinition<>("Grouping " + count, f);
+            }).toList());
             return this;
         }
 
@@ -99,7 +102,10 @@ public record Question<T extends BaseDataSet>(
          * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = false)
          */
         public Builder<T> groupingFunctions(Function<T, ?>... functions) {
-            this.groupings.addAll(Arrays.stream(functions).map(f -> new GroupingDefinition<>("Unknown", f)).toList());
+            this.groupings.addAll(Arrays.stream(functions).map(f -> {
+                count++;
+                return new GroupingDefinition<>("Grouping " + count, f);
+            }).toList());
             return this;
         }
 
@@ -107,7 +113,10 @@ public record Question<T extends BaseDataSet>(
          * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = true)
          */
         public Builder<T> forcedGrouping(List<Function<T, ?>> functions) {
-            this.groupings.addAll(functions.stream().map(f -> new GroupingDefinition<>("Unknown", f, true)).toList());
+            this.groupings.addAll(functions.stream().map(f -> {
+                count++;
+                return new GroupingDefinition<>("Grouping " + count, f, true);
+            }).toList());
             return this;
         }
 
@@ -115,7 +124,10 @@ public record Question<T extends BaseDataSet>(
          * Creates a {@link GroupingDefinition} from just the functions and generates the name (forced = true)
          */
         public Builder<T> forcedGrouping(Function<T, ?>... functions) {
-            this.groupings.addAll(Arrays.stream(functions).map(f -> new GroupingDefinition<>("Unknown", f, true)).toList());
+            this.groupings.addAll(Arrays.stream(functions).map(f -> {
+                count++;
+                return new GroupingDefinition<>("Grouping " + count, f, true);
+            }).toList());
             return this;
         }
 

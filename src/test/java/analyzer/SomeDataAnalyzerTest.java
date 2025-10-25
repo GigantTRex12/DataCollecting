@@ -56,7 +56,7 @@ public class SomeDataAnalyzerTest extends TestWithOutputs {
         final String GROUP_QUESTION = "Do you want to group by number_positive? (y|yes)";
         final String GROUPED_VALUES1 = " grouped Datasets with:";
         final String GROUPED_VALUES2 = "number_positive";
-        final String GROUPED_VALUES3 = "Unknown";
+        final String GROUPED_VALUES3 = "Grouping 1";
 
         // when
         analyzer.analyze();
