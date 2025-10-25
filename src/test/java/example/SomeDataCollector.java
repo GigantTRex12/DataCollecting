@@ -21,12 +21,12 @@ public class SomeDataCollector extends AbstractDataCollector<SomeDataSet> {
 
                 Question.ask("number", "Enter some number")
                         .regex("^0$|^[1-9]\\d*$")
-                        .normalize((s, _) -> Integer.parseInt(s))
+                        .normalize(s -> Integer.parseInt(s))
                         .build(),
 
                 Question.ask("someValue", "Enter some value")
                         .when(m -> (int) m.get("number") >= 10)
-                        .normalize((s, _) -> "Value is: " + s)
+                        .normalize(s -> "Value is: " + s)
                         .build()
         );
     }

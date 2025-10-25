@@ -86,6 +86,10 @@ public record Question(
         }
 
         // easier ways to create validator/normalizer
+
+        /**
+         * Transforms the parser into a {@link NormalizerBiFunction}.
+         */
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
             this.normalizer = (answer, _) -> parser.apply(answer.strip());
             return this;
@@ -139,7 +143,9 @@ public record Question(
             return this;
         }
 
-        // multiple values in one question need multiple normalizers -> instead return list of results
+        /**
+         * Merges multiple {@link NormalizerBiFunction} into one.
+         */
         public Builder normalizers(final NormalizerBiFunction... normalizers) {
             this.normalizer = (answer, answers) -> {
                 List<Object> list = new ArrayList<>();
@@ -149,6 +155,9 @@ public record Question(
             return this;
         }
 
+        /**
+         * Merges multiple parsers into one {@link NormalizerBiFunction}.
+         */
         public Builder normalizers(final ThrowingFunction<String, Object, InvalidInputFormatException>... parsers) {
             this.normalizer = (answer, _) -> {
                 List<Object> list = new ArrayList<>();
