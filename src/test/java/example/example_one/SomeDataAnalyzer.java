@@ -1,4 +1,4 @@
-package example;
+package example.example_one;
 
 import analyzer.BaseDataAnalyzer;
 import analyzer.GroupingDefinition;
