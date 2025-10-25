@@ -2,12 +2,13 @@ package collector;
 
 import Utils.StringUtils;
 import collector.functions.EmptyIfEmptyBiFunction;
-import collector.functions.NormalizerBiFunction;
-import collector.functions.NullIfEmptyNormalizer;
+import collector.functions.NormalizerBiConsumer;
 import collector.functions.ThrowingFunction;
 import exceptions.InvalidInputFormatException;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -19,20 +20,20 @@ import static java.util.Objects.requireNonNull;
  * Represents a single survey Question definition for collecting data.
  * Encapsulates all logic for asking and processing user input without relying on reflection.
  *
- * @param key        The name of the property that is resulting of this Question and the key in the resulting key-value map.
+ * @param key        The name of the property that is resulting of this Question and the key in the resulting key-value map if no normalizer is given.
  * @param prompt     The prompt printed for this question.
  * @param condition  A condition for the key-value map, allowing to skip this Question depending on previous Questions.
  * @param validator  Validates user input. Return an empty Optional for valid inputs and Optional containing an error message otherwise.
- * @param normalizer Function parsing the user input into an Object to be put in the key-value map.
+ * @param normalizer Consumer parsing the user input into an Object and puts it into the key-value map.
  * @param multiline  Wether to allow multiple lines of input. If true lets user make inputs until an empty line is input.
  */
 public record Question(
-        String key, // use "&" for multiple values in one question // TODO: probably move this logic into normalizer
+        String key,
         String prompt,
         Predicate<Map<String, Object>> condition,
         BiFunction<String, Map<String, Object>, Optional<String>> validator,
         // on multilines this validates each line separately
-        NormalizerBiFunction normalizer,
+        NormalizerBiConsumer normalizer,
         boolean multiline
 ) {
     public Question {
@@ -40,7 +41,7 @@ public record Question(
         requireNonNull(prompt);
         condition = condition != null ? condition : _ -> true;
         validator = validator != null ? validator : (_, _) -> Optional.empty();
-        normalizer = normalizer != null ? normalizer : (answer, _) -> answer;
+        normalizer = normalizer != null ? normalizer : (answer, map) -> map.put(key, answer);
     }
 
     public static Builder ask(final String key, final String prompt) {
@@ -55,7 +56,7 @@ public record Question(
         private final String prompt;
         protected Predicate<Map<String, Object>> condition;
         protected BiFunction<String, Map<String, Object>, Optional<String>> validator;
-        protected NormalizerBiFunction normalizer;
+        protected NormalizerBiConsumer normalizer;
         protected boolean multiline = false;
         protected String conditionPrompt;
 
@@ -75,7 +76,7 @@ public record Question(
             return this;
         }
 
-        public Builder normalize(final NormalizerBiFunction normalizer) {
+        public Builder normalize(final NormalizerBiConsumer normalizer) {
             this.normalizer = normalizer;
             return this;
         }
@@ -88,10 +89,11 @@ public record Question(
         // easier ways to create validator/normalizer
 
         /**
-         * Transforms the parser into a {@link NormalizerBiFunction}.
+         * Transforms the parser into a {@link NormalizerBiConsumer}.
+         * For normalizer with multiple keys use {@link Builder#normalizers(ThrowingFunction[])} instead.
          */
         public Builder normalize(final ThrowingFunction<String, Object, InvalidInputFormatException> parser) {
-            this.normalizer = (answer, _) -> parser.apply(answer.strip());
+            this.normalizer = (answer, map) -> map.put(key, parser.apply(answer.strip()));
             return this;
         }
 
@@ -138,33 +140,23 @@ public record Question(
          */
         public Builder emptyToNull() {
             validator = validator == null ? null : new EmptyIfEmptyBiFunction(validator);
-            if (normalizer == null) normalizer = (answer, _) -> answer.strip();
-            normalizer = new NullIfEmptyNormalizer(normalizer);
+
             return this;
         }
 
         /**
-         * Merges multiple {@link NormalizerBiFunction} into one.
+         * Merges multiple {@link NormalizerBiConsumer} into one.
          */
-        public Builder normalizers(final NormalizerBiFunction... normalizers) {
-            this.normalizer = (answer, answers) -> {
-                List<Object> list = new ArrayList<>();
-                for (NormalizerBiFunction n : normalizers) list.add(n.apply(answer, answers));
-                return list;
-            };
+        public Builder normalizers(final NormalizerBiConsumer... normalizers) {
+
             return this;
         }
 
         /**
-         * Merges multiple parsers into one {@link NormalizerBiFunction}.
+         * Merges multiple parsers into one {@link NormalizerBiConsumer}.
          */
         public Builder normalizers(final ThrowingFunction<String, Object, InvalidInputFormatException>... parsers) {
-            this.normalizer = (answer, _) -> {
-                List<Object> list = new ArrayList<>();
-                for (ThrowingFunction<String, Object, InvalidInputFormatException> parser : parsers)
-                    list.add(parser.apply(answer.strip()));
-                return list;
-            };
+
             return this;
         }
 

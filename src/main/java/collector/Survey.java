@@ -39,8 +39,7 @@ class Survey {
                 if (!validateAndPrintError(preset, question, answers)) presetAnswers.remove(question);
                 else {
                     try {
-                        final Object normalized = question.normalizer().apply(preset, answers);
-                        putInMap(answers, question.key(), (normalized instanceof Optional<?> t) ? t.orElse(null) : normalized);
+                        question.normalizer().apply(preset, answers);
                         continue;
                     } catch (InvalidInputFormatException e) {
                         println("Invalid input: " + e.getMessage());
@@ -55,8 +54,7 @@ class Survey {
                 if (!validateAndPrintError(raw, question, answers)) continue;
 
                 try {
-                    final Object normalized = question.normalizer().apply(raw, answers);
-                    putInMap(answers, question.key(), (normalized instanceof Optional<?> t) ? t.orElse(null) : normalized);
+                    question.normalizer().apply(raw, answers);
                 } catch (InvalidInputFormatException e) {
                     println("Invalid input: " + e.getMessage());
                     continue;
@@ -80,17 +78,6 @@ class Survey {
             return false;
         }
         return true;
-    }
-
-    private void putInMap(Map<String, Object> answers, String key, Object value) {
-        if (key.contains("&")) {
-            if (!(value instanceof List<?> values))
-                throw new IllegalStateException("For multiple fields value has to be a List");
-            String[] keys = key.split("&");
-            if (values.size() != keys.length)
-                throw new IllegalStateException("Different amount of keys and values.");
-            for (int i = 0; i < keys.length; i++) answers.put(keys[i], values.get(i));
-        } else answers.put(key, value);
     }
 
     void presetAnswers() {
