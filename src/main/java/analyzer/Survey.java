@@ -21,7 +21,6 @@ class Survey {
                 String f = input("Do you want to group by " + gd.name() + "? (y|yes)").toLowerCase();
                 if (!(f.equals("yes") || f.equals("y"))) continue;
             }
-            // TODO: allow optional filter
             groupReps.add(gd.toString());
             groupings.add(gd.function());
         }

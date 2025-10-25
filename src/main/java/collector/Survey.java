@@ -39,7 +39,7 @@ class Survey {
                 if (!validateAndPrintError(preset, question, answers)) presetAnswers.remove(question);
                 else {
                     try {
-                        question.normalizer().apply(preset, answers);
+                        question.normalizer().accept(preset, answers);
                         continue;
                     } catch (InvalidInputFormatException e) {
                         println("Invalid input: " + e.getMessage());
@@ -54,7 +54,7 @@ class Survey {
                 if (!validateAndPrintError(raw, question, answers)) continue;
 
                 try {
-                    question.normalizer().apply(raw, answers);
+                    question.normalizer().accept(raw, answers);
                 } catch (InvalidInputFormatException e) {
                     println("Invalid input: " + e.getMessage());
                     continue;

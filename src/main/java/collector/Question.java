@@ -147,7 +147,7 @@ public record Question(
                     ((s, m) -> m.put(key, s.isEmpty() ? null : s)) :
                     ((s, m) -> {
                         if (s.isEmpty()) m.put(key, null);
-                        else normalizer.apply(s, m);
+                        else normalizer.accept(s, m);
                     });
             return this;
         }
