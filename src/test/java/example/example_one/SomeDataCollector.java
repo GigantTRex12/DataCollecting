@@ -1,6 +1,8 @@
-package example;
+package example.example_one;
 
 import collector.Question;
+import example.AbstractDataCollector;
+import example.MetadataExample;
 
 import java.util.List;
 import java.util.Map;

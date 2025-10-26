@@ -1,8 +1,8 @@
 package analyzer;
 
 import example.MetadataExample;
-import example.SomeDataAnalyzer;
-import example.SomeDataSet;
+import example.example_one.SomeDataAnalyzer;
+import example.example_one.SomeDataSet;
 import org.junit.jupiter.api.Test;
 import testutils.InputBuilder;
 import testutils.TestWithOutputs;

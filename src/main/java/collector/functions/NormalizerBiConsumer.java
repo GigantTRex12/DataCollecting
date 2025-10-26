@@ -5,8 +5,8 @@ import exceptions.InvalidInputFormatException;
 import java.util.Map;
 
 @FunctionalInterface
-public interface NormalizerBiFunction {
+public interface NormalizerBiConsumer {
 
-    Object apply(String s, Map<String, Object> m) throws InvalidInputFormatException;
+    void accept(String s, Map<String, Object> m) throws InvalidInputFormatException;
 
 }

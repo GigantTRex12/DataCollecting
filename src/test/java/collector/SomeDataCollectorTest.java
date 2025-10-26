@@ -1,8 +1,8 @@
 package collector;
 
 import example.MetadataExample;
-import example.SomeDataCollector;
-import example.SomeDataSet;
+import example.example_one.SomeDataCollector;
+import example.example_one.SomeDataSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import testutils.InputBuilder;

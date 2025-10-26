@@ -1,4 +1,7 @@
-package example;
+package example.example_one;
+
+import example.AbstractDataSet;
+import example.MetadataExample;
 
 public class SomeDataSet extends AbstractDataSet {
 
