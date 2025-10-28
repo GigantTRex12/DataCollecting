@@ -1,5 +1,3 @@
-[![](https://jitpack.io/v/GigantTRex12/DataCollecting.svg)](https://jitpack.io/#GigantTRex12/DataCollecting)
-
 # Data Collection & Analyzation
 
 This library provides 2 functionalities:  
