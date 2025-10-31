@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.noxius</groupId>
-    <artifactId>poe-collection</artifactId>
-    <version>1.0.0</version>
+    <artifactId>data-collection</artifactId>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -16,6 +16,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exec.mainClass>com.company.Main</exec.mainClass>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub GigantTRex12 Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/GigantTRex12/DataCollecting</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
