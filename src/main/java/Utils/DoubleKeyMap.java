@@ -30,7 +30,7 @@ public class DoubleKeyMap<K, V> extends HashMap<K, V> {
 
     public DoubleKeyMap() {
         keys_short_to_long = new HashMap<>();
-        keys_long_to_short = new HashMap<>();
+        keys_long_to_short = new LinkedHashMap<>();
     }
 
     @Override

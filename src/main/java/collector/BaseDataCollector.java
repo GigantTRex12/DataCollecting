@@ -1,11 +1,14 @@
 package collector;
 
+import Utils.DoubleKeyMap;
+import Utils.NoCaseString;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static Utils.InputUtils.input;
 import static java.lang.IO.println;
@@ -30,43 +33,43 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     );
 
     private final Survey survey;
+    private boolean running;
 
     protected List<T> data = new ArrayList<>();
 
     protected Metadata currMetadata;
 
+    protected final DoubleKeyMap<NoCaseString, Runnable> actionMap;
+
     protected BaseDataCollector() {
         survey = new Survey(getQuestions());
+        actionMap = new DoubleKeyMap<NoCaseString, Runnable>();
+        addAction("AddData", "a", this::addData);
+        addAction("ClearData", "c", this::clearData);
+        addAction("Save", "s", this::saveData);
+        addAction("PrintData", "p", this::printData);
+        addAction("PickMetadata", "m", this::setMetadata);
+        addAction("FixChoices", "fc", this::fixChoices);
+        addAction("ClearFixedChoices", "cc", this::clearFixedChoices);
+        addAction("Exit", "e", () -> {this.saveData(); this.running = false;});
     }
 
     /**
-     * Starts up the Analyzer and presents the user with the choice of these actions:
-     * addData; clearData; save; printData; pickMetadata; fixChoices; clearFixedChoices; exit.
+     * Starts up the Analyzer and presents the user with the choice of the actions available in the {@link #actionMap}.
      * Performs the chosen action and loops back to the choice.
      */
     public void collect() {
+        running = true;
         setMetadata();
-        while (true) {
-            String action = inputAction();
-            if (action.equals("exit")) {
-                saveData();
-                break;
-            }
-            executeAction(action);
+        while (running) {
+            executeAction(inputAction());
         }
     }
 
     protected void executeAction(String action) {
-        switch (action) {
-            case ("adddata") -> addData();
-            case ("cleardata") -> clearData();
-            case ("save") -> saveData();
-            case ("printdata") -> printData();
-            case ("pickmetadata") -> setMetadata();
-            case ("fixchoices") -> fixChoices();
-            case ("clearfixedchoices") -> clearFixedChoices();
-            default -> println("Unknown action: " + action);
-        }
+        Runnable execute = actionMap.get(new NoCaseString(action));
+        if (execute == null) println(action + " is not a valid action.");
+        else execute.run();
     }
 
     /**
@@ -113,8 +116,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Method of inputting the action to choose in {@link BaseDataCollector#collect()}.
      */
     protected String inputAction() {
-        String action = input("What would you like to do?").toLowerCase();
-        return actions.getOrDefault(action, action).toLowerCase();
+        return input("What would you like to do?" + System.lineSeparator() + actionMap.keyReps());
     }
 
     /**
@@ -155,6 +157,10 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     protected void clearFixedChoices() {
         survey.clearPresetAnswers();
+    }
+
+    protected void addAction(String actionLong, String actionShort, Runnable action) {
+        actionMap.put(new NoCaseString(actionLong), new NoCaseString(actionShort), action);
     }
 
 }
