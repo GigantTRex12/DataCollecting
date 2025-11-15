@@ -11,7 +11,6 @@ import java.util.Map;
 import static Utils.InputUtils.input;
 import static java.lang.IO.print;
 import static java.lang.IO.println;
-import static java.util.Map.entry;
 
 /**
  * Class for Collecting new Data. Subclasses can override any relevant methods.
@@ -26,21 +25,21 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
 
     protected Metadata currMetadata;
 
-    protected final ActionMap actionMap;
+    protected final ActionMap actions;
 
     protected boolean running;
 
     protected BaseDataCollector() {
         survey = new Survey(getQuestions());
-        actionMap = new ActionMap();
-        actionMap.put("AddData", this::addData, List.of("a"));
-        actionMap.put("ClearData", this::clearData, List.of("c"));
-        actionMap.put("Save", this::saveData, List.of("s"));
-        actionMap.put("PrintData", this::printData, List.of("p"));
-        actionMap.put("PickMetadata", this::setMetadata, List.of("m"));
-        actionMap.put("FixChoices", this::fixChoices, List.of("f", "fc"));
-        actionMap.put("ClearFixedChoices", this::clearFixedChoices, List.of("cc"));
-        actionMap.put("Exit", () -> {this.saveData();this.running = false;}, List.of("e"));
+        actions = new ActionMap();
+        actions.put("AddData", this::addData, List.of("a"));
+        actions.put("ClearData", this::clearData, List.of("c"));
+        actions.put("Save", this::saveData, List.of("s"));
+        actions.put("PrintData", this::printData, List.of("p"));
+        actions.put("PickMetadata", this::setMetadata, List.of("m"));
+        actions.put("FixChoices", this::fixChoices, List.of("f", "fc"));
+        actions.put("ClearFixedChoices", this::clearFixedChoices, List.of("cc"));
+        actions.put("Exit", () -> {this.saveData();this.running = false;}, List.of("e"));
         running = false;
     }
 
@@ -59,7 +58,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     protected void executeAction(String action) {
-        actionMap.acceptOrFallback(action, () -> print(action + " is not a valid option."));
+        actions.acceptOrFallback(action, () -> print(action + " is not a valid option."));
     }
 
     /**
@@ -106,7 +105,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Method of inputting the action to choose in {@link BaseDataCollector#collect()}.
      */
     protected String inputAction() {
-        return input("What would you like to do?" + System.lineSeparator() + "Options: " + actionMap.keyReps("; ", "|"));
+        return input("What would you like to do?" + System.lineSeparator() + "Options: " + actions.keyReps("; ", "|"));
     }
 
     /**
