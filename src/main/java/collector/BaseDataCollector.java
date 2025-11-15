@@ -39,7 +39,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         actions.put("PickMetadata", this::setMetadata, List.of("m"));
         actions.put("FixChoices", this::fixChoices, List.of("f", "fc"));
         actions.put("ClearFixedChoices", this::clearFixedChoices, List.of("cc"));
-        actions.put("Exit", () -> {this.saveData();this.running = false;}, List.of("e"));
+        actions.put("Exit", this::exit, List.of("e"));
         running = false;
     }
 
@@ -146,6 +146,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     protected void clearFixedChoices() {
         survey.clearPresetAnswers();
+    }
+
+    /**
+     * Exits the loop in the {@link #collect()} method, exiting the analyzer.
+     */
+    protected void exit() {
+        this.saveData();
+        this.running = false;
     }
 
 }

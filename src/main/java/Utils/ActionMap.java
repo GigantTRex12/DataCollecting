@@ -59,15 +59,16 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     /**
      * Links the given key to the given value.
      *
-     * @param key String representation of the key to point to the value.
+     * @param key   String representation of the key to point to the value.
      * @param value Runnable the given key should get linked to.
      * @return The value the given key is now associated on success. Always returns the parameter value.
-     * @throws NullPointerException If the specified key or value is null.
+     * @throws NullPointerException  If the specified key or value is null.
      * @throws DuplicateKeyException If the key is already linked to some value.
      */
     @Override
     public Runnable put(String key, Runnable value) {
-        if (key == null || value == null) throw new NullPointerException("Keys or values in ActionMaps may never be null!");
+        if (key == null || value == null)
+            throw new NullPointerException("Keys or values in ActionMaps may never be null!");
         if (map.containsKey(key.toLowerCase())) throw new DuplicateKeyException("Key " + key + " already exists!");
 
         Box box = new Box(value, key);
@@ -79,21 +80,24 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     /**
      * Links all the given keys to the given value.
      *
-     * @param key String representation of the main key to point to the value.
-     * @param value Runnable the given key should get linked to.
+     * @param key       String representation of the main key to point to the value.
+     * @param value     Runnable the given key should get linked to.
      * @param extraKeys A List of keys that will be pointing to the same given value. These keys will not be main keys
      *                  and will be associative with the main key.
      * @return The value the given keys are now associated on success. Always returns the parameter value.
-     * @throws NullPointerException If the specified key or value is null or if the extraKeys List is null or empty.
+     * @throws NullPointerException  If the specified key or value is null or if the extraKeys List is null or empty.
      * @throws DuplicateKeyException If any of the given keys is already linked to some value.
      */
     public Runnable put(String key, Runnable value, List<String> extraKeys) {
-        if (key == null || value == null) throw new NullPointerException("Keys or values in ActionMaps may never be null!");
-        if (extraKeys == null || extraKeys.isEmpty()) throw new NullPointerException("A List of extra keys needs to be provided and not be empty!");
+        if (key == null || value == null)
+            throw new NullPointerException("Keys or values in ActionMaps may never be null!");
+        if (extraKeys == null || extraKeys.isEmpty())
+            throw new NullPointerException("A List of extra keys needs to be provided and not be empty!");
         if (map.containsKey(key.toLowerCase())) throw new DuplicateKeyException("Key " + key + " already exists!");
         for (String extraKey : extraKeys) {
             if (extraKey == null) throw new NullPointerException("Keys in ActionMaps may never be null!");
-            if (map.containsKey(extraKey.toLowerCase())) throw new DuplicateKeyException("Key " + extraKey + " already exists!");
+            if (map.containsKey(extraKey.toLowerCase()))
+                throw new DuplicateKeyException("Key " + extraKey + " already exists!");
         }
 
         Box box = new Box(value, key, extraKeys);
@@ -106,11 +110,11 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     /**
      * Links the newKeys to the value the given key is linked to.
      *
-     * @param key The key from which the value will be linked to.
+     * @param key     The key from which the value will be linked to.
      * @param newKeys The new keys which will be linked to the value.
      * @return The value the given key is associated on success.
-     * @throws NullPointerException If the given key or any of the newKeys is null or the given key is not currently
-     *                  in this map.
+     * @throws NullPointerException  If the given key or any of the newKeys is null or the given key is not currently
+     *                               in this map.
      * @throws DuplicateKeyException If any of the given newKeys are linked to some value.
      */
     public Runnable addKeys(String key, String... newKeys) {
@@ -229,7 +233,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
      * Replaces the value the given key is linked to. All other keys linked to the same value will also have their
      * value replaced. Has no effect when the key is not linked to any value.
      *
-     * @param key The key from which the value is to be changed.
+     * @param key   The key from which the value is to be changed.
      * @param value The new value.
      * @return The old value or null if there was no value linked before.
      * @throws NullPointerException If the specified key is null.
@@ -282,7 +286,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
      * Executes the {@link Runnable} the given key is currently linked to. If the given key is not linked
      * to a value will instead run the fallback function.
      *
-     * @param s The key.
+     * @param s        The key.
      * @param fallback The fallback function called when the key is not linked to a value.
      * @throws NullPointerException If the specified key is null.
      */
@@ -313,7 +317,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
      * If for example sep_main is ',' and sep_small is ';' then the result could for example look something like this:
      * 'keyA1 (keyA2;keyA3),keyB1 (keyB2),keyC1'
      *
-     * @param sep_main The separator for keys linked to different values.
+     * @param sep_main  The separator for keys linked to different values.
      * @param sep_small The separator for keys linked to the same value.
      * @return A string representation of the keys in this map
      */

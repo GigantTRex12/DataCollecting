@@ -15,6 +15,7 @@ public class SomeDataAnalyzerTest extends TestWithOutputs {
     private static final MetadataExample M = new MetadataExample();
 
     private static final String ANALYZE = "a";
+    private static final String OPTIONS = "Options: Analyze (a); PrintData (p); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final String ANALYZE_OPTIONS1 = "Choose what to analyze. Options:";
     private static final String ANALYZE_OPTIONS2 = "Name, Some_Value";
@@ -65,6 +66,7 @@ public class SomeDataAnalyzerTest extends TestWithOutputs {
         // TODO: order of evaluation outputs might not be deterministic
         validateOutputs(new String[]{
                 WHAT_DO,
+                OPTIONS,
                 ANALYZE_OPTIONS1,
                 ANALYZE_OPTIONS2,
                 GROUP_QUESTION,
@@ -81,6 +83,7 @@ public class SomeDataAnalyzerTest extends TestWithOutputs {
                 "Name 2: [9.68% - 70%] (2/6)",
                 "Name 1: [9.68% - 70%] (2/6)",
                 WHAT_DO,
+                OPTIONS,
                 ANALYZE_OPTIONS1,
                 ANALYZE_OPTIONS2,
                 GROUP_QUESTION,
@@ -89,6 +92,7 @@ public class SomeDataAnalyzerTest extends TestWithOutputs {
                 "Name 2: [15.17% - 64.62%] (4/11)",
                 "Name 1: [15.17% - 64.62%] (4/11)",
                 WHAT_DO,
+                OPTIONS,
                 ANALYZE_OPTIONS1,
                 ANALYZE_OPTIONS2,
                 4 + GROUPED_VALUES1,
@@ -114,7 +118,8 @@ public class SomeDataAnalyzerTest extends TestWithOutputs {
                 "Name 2",
                 "Value 1: [15% - 85%] (2/4)",
                 "Value 2: [15% - 85%] (2/4)",
-                WHAT_DO
+                WHAT_DO,
+                OPTIONS
         });
     }
 

@@ -33,7 +33,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
      */
     protected static final Consumer<List<Object>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
 
-    protected final List<T> data;
+    protected List<T> data;
 
     protected final List<Question<T>> questions;
     protected final List<String> questionNames;
@@ -52,7 +52,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         actions = new ActionMap();
         actions.put("Analyze", this::analyzation, List.of("a"));
         actions.put("PrintData", this::printData, List.of("p"));
-        actions.put("Exit", () -> this.running = false, List.of("e"));
+        actions.put("Exit", this::exit, List.of("e"));
         running = false;
     }
 
@@ -111,6 +111,13 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         for (T data : data) {
             println(data);
         }
+    }
+
+    /**
+     * Exits the loop in the {@link #analyze()} method, exiting the analyzer.
+     */
+    protected void exit() {
+        running = false;
     }
 
     private static <R> void simplePercentages(List<R> values) {

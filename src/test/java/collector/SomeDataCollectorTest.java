@@ -21,7 +21,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
     private static final String FIX = "fc";
-    private static final String ADD_OPTIONS = "Options: AddData (a); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
+    private static final String OPTIONS = "Options: AddData (a); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final String FIX_MSG = "Set the fixed answers. Leave empty to skip. Enter \\ for empty String.";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
@@ -78,7 +78,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
 
         validateOutputs(new String[]{
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some name",
                 "Invalid input: Must have at least 4 symbols",
                 "Enter some name",
@@ -88,7 +88,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
@@ -97,12 +97,12 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 "Format: ^0$|^[1-9]\\d*$",
                 "Enter some value",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 WHAT_DO,
-                ADD_OPTIONS
+                OPTIONS
         });
     }
 
@@ -152,45 +152,45 @@ public class SomeDataCollectorTest extends TestWithOutputs {
 
         validateOutputs(new String[]{
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 FIX_MSG,
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 "Enter some value",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 FIX_MSG,
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 "Enter some value",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some name",
                 "Invalid input: Input needs to match pattern ^0$|^[1-9]\\d*$",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 FIX_MSG,
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
                 "Enter some value",
                 WHAT_DO,
-                ADD_OPTIONS,
+                OPTIONS,
                 "Enter some name",
                 WHAT_DO,
-                ADD_OPTIONS
+                OPTIONS
         });
     }
 
