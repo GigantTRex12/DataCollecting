@@ -1,5 +1,6 @@
 package collector;
 
+import Utils.ActionMap;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static Utils.InputUtils.input;
+import static java.lang.IO.print;
 import static java.lang.IO.println;
 import static java.util.Map.entry;
 
@@ -18,25 +20,28 @@ import static java.util.Map.entry;
  */
 public abstract class BaseDataCollector<T extends BaseDataSet> {
 
-    private static final Map<String, String> actions = Map.ofEntries(
-            entry("a", "AddData"),
-            entry("c", "ClearData"),
-            entry("s", "Save"),
-            entry("p", "PrintData"),
-            entry("m", "PickMetadata"),
-            entry("fc", "FixChoices"),
-            entry("cc", "ClearFixedChoices"),
-            entry("e", "Exit")
-    );
-
     private final Survey survey;
 
     protected List<T> data = new ArrayList<>();
 
     protected Metadata currMetadata;
 
+    protected final ActionMap actionMap;
+
+    protected boolean running;
+
     protected BaseDataCollector() {
         survey = new Survey(getQuestions());
+        actionMap = new ActionMap();
+        actionMap.put("AddData", this::addData, List.of("a"));
+        actionMap.put("ClearData", this::clearData, List.of("c"));
+        actionMap.put("Save", this::saveData, List.of("s"));
+        actionMap.put("PrintData", this::printData, List.of("p"));
+        actionMap.put("PickMetadata", this::setMetadata, List.of("m"));
+        actionMap.put("FixChoices", this::fixChoices, List.of("f", "fc"));
+        actionMap.put("ClearFixedChoices", this::clearFixedChoices, List.of("cc"));
+        actionMap.put("Exit", () -> {this.saveData();this.running = false;}, List.of("e"));
+        running = false;
     }
 
     /**
@@ -46,27 +51,15 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     public void collect() {
         setMetadata();
-        while (true) {
+        running = true;
+        while (running) {
             String action = inputAction();
-            if (action.equals("exit")) {
-                saveData();
-                break;
-            }
             executeAction(action);
         }
     }
 
     protected void executeAction(String action) {
-        switch (action) {
-            case ("adddata") -> addData();
-            case ("cleardata") -> clearData();
-            case ("save") -> saveData();
-            case ("printdata") -> printData();
-            case ("pickmetadata") -> setMetadata();
-            case ("fixchoices") -> fixChoices();
-            case ("clearfixedchoices") -> clearFixedChoices();
-            default -> println("Unknown action: " + action);
-        }
+        actionMap.acceptOrFallback(action, () -> print(action + " is not a valid option."));
     }
 
     /**
@@ -113,8 +106,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Method of inputting the action to choose in {@link BaseDataCollector#collect()}.
      */
     protected String inputAction() {
-        String action = input("What would you like to do?").toLowerCase();
-        return actions.getOrDefault(action, action).toLowerCase();
+        return input("What would you like to do?" + System.lineSeparator() + "Options: " + actionMap.keyReps("; ", "|"));
     }
 
     /**

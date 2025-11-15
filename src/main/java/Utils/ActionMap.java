@@ -129,7 +129,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
 
     /**
      * Removes only the keys without affecting other keys linked to the same value. Will skip any keys that are
-     * not currently linked to a value, null or a main key.
+     * null, a main key or not currently linked to a value.
      *
      * @param keys The keys to remove.
      * @return The amount of successfully removed keys.
@@ -276,6 +276,21 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
         if (s == null) throw new NullPointerException("Keys in ActionMaps can never be null!");
         Box box = map.get(s.toLowerCase());
         if (box.value != null) box.value.run();
+    }
+
+    /**
+     * Executes the {@link Runnable} the given key is currently linked to. If the given key is not linked
+     * to a value will instead run the fallback function.
+     *
+     * @param s The key.
+     * @param fallback The fallback function called when the key is not linked to a value.
+     * @throws NullPointerException If the specified key is null.
+     */
+    public void acceptOrFallback(String s, Runnable fallback) {
+        if (s == null) throw new NullPointerException("Keys in ActionMaps can never be null!");
+        Box box = map.get(s.toLowerCase());
+        if (box.value != null) box.value.run();
+        else fallback.run();
     }
 
     /**
