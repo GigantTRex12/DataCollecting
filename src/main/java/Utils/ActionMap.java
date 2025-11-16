@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
  * key given in a put call. To not repeat values {@link #size()}, {@link #keySet()}, {@link #values()} and
  * {@link #forEach(BiConsumer)} will only look at the main keys. The {@link #containsKey(Object)} method looks at
  * all keys.
+ * The {@link #keySet()} and {@link #forEach(BiConsumer)} methods preserve the order in which alues where put
+ * into the map.
  * This class is an implementation of {@link Consumer} and by calling {@link #accept(String)} the runnable that
  * String is mapped to can be executed. The {@link #keyReps(String)} or {@link #keyReps(String, String)} method
  * can be used to generate a String representing the options which keys can be accepted.
@@ -59,8 +61,8 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     /**
      * Links the given key to the given value.
      *
-     * @param key   String representation of the key to point to the value.
-     * @param value Runnable the given key should get linked to.
+     * @param key       String representation of the key to point to the value.
+     * @param value     Runnable the given key should get linked to.
      * @return The value the given key is now associated on success. Always returns the parameter value.
      * @throws NullPointerException  If the specified key or value is null.
      * @throws DuplicateKeyException If the key is already linked to some value.
@@ -110,8 +112,8 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     /**
      * Links the newKeys to the value the given key is linked to.
      *
-     * @param key     The key from which the value will be linked to.
-     * @param newKeys The new keys which will be linked to the value.
+     * @param key       The key from which the value will be linked to.
+     * @param newKeys   The new keys which will be linked to the value.
      * @return The value the given key is associated on success.
      * @throws NullPointerException  If the given key or any of the newKeys is null or the given key is not currently
      *                               in this map.
@@ -135,7 +137,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
      * Removes only the keys without affecting other keys linked to the same value. Will skip any keys that are
      * null, a main key or not currently linked to a value.
      *
-     * @param keys The keys to remove.
+     * @param keys      The keys to remove.
      * @return The amount of successfully removed keys.
      */
     public int removeKeys(String... keys) {
@@ -152,10 +154,49 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     }
 
     /**
+     * Allows replacing the main key of the value a given key is linked to. The given key does not need to be
+     * a main key itself. This also rearranges the order of the keys as if this was added new.
+     * If the newKey is already linked to the same value as the given key the main key will still be replaced
+     * accordingly. This still applies when key and newKey are equal.
+     * Does nothing if the newKey already is the main key for that value.
+     *
+     * @param key       The key for which the linked value is to be modified.
+     * @param newKey    The new main key for the linked value.
+     * @return The old main key if it has been replaced or null if the key was not linked to any value or the newKey
+     *                              already was the main key.
+     * @throws NullPointerException If the given key or the newKey is null.
+     * @throws DuplicateKeyException If the newKey is already linked to a different value than the given key.
+     */
+    public String renameKey(String key, String newKey) {
+        if (key == null || newKey == null) throw new NullPointerException("Keys in ActionMaps may never be null!");
+        Box box = map.get(key.toLowerCase());
+        if (box == null) return null;
+        String oldKey = box.mainKey;
+        if (oldKey.equalsIgnoreCase(newKey)) return null;
+        Optional<String> newRep = box.keys.stream().filter(newKey::equalsIgnoreCase).findFirst();
+        if (newRep.isPresent()) {
+            map.remove(oldKey.toLowerCase());
+            box.mainKey = newKey;
+            box.keys.remove(newRep.get());
+            keySet.remove(oldKey.toLowerCase());
+            keySet.add(newKey.toLowerCase());
+        } else if (containsKey(newKey)) {
+            throw new DuplicateKeyException("Key " + newKey + " already exists!");
+        } else {
+            box.mainKey = newKey;
+            map.put(key.toLowerCase(), box);
+            map.remove(oldKey.toLowerCase());
+            keySet.remove(oldKey.toLowerCase());
+            keySet.add(newKey.toLowerCase());
+        }
+        return oldKey;
+    }
+
+    /**
      * Removes the value the given key is linked to. Will also cause all other keys linked to the same value to
      * be removed.
      *
-     * @param key The key from which the value is to be removed from the map.
+     * @param key       The key from which the value is to be removed from the map.
      * @return The removed value or null if the key is not currently linked to a value.
      */
     @Override
@@ -233,8 +274,8 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
      * Replaces the value the given key is linked to. All other keys linked to the same value will also have their
      * value replaced. Has no effect when the key is not linked to any value.
      *
-     * @param key   The key from which the value is to be changed.
-     * @param value The new value.
+     * @param key       The key from which the value is to be changed.
+     * @param value     The new value.
      * @return The old value or null if there was no value linked before.
      * @throws NullPointerException If the specified key is null.
      */
@@ -272,7 +313,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
      * Executes the {@link Runnable} the given key is currently linked to. Does nothing when the key is not
      * linked to a value.
      *
-     * @param s The key.
+     * @param s         The key.
      * @throws NullPointerException If the specified key is null.
      */
     @Override
@@ -329,7 +370,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
 
     private static class Box {
         Runnable value;
-        final String mainKey;
+        String mainKey;
         final List<String> keys;
 
         Box(Runnable value, String mainKey, List<String> keys) {
