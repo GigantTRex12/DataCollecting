@@ -58,7 +58,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     protected void executeAction(String action) {
-        actions.acceptOrFallback(action, () -> print(action + " is not a valid option."));
+        actions.acceptOrFallback(action, () -> println(action + " is not a valid option."));
     }
 
     /**

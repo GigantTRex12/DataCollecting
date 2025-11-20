@@ -184,7 +184,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
             throw new DuplicateKeyException("Key " + newKey + " already exists!");
         } else {
             box.mainKey = newKey;
-            map.put(key.toLowerCase(), box);
+            map.put(newKey.toLowerCase(), box);
             map.remove(oldKey.toLowerCase());
             keySet.remove(oldKey.toLowerCase());
             keySet.add(newKey.toLowerCase());
@@ -334,7 +334,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
     public void acceptOrFallback(String s, Runnable fallback) {
         if (s == null) throw new NullPointerException("Keys in ActionMaps can never be null!");
         Box box = map.get(s.toLowerCase());
-        if (box.value != null) box.value.run();
+        if (box != null) box.value.run();
         else fallback.run();
     }
 
@@ -376,7 +376,7 @@ public class ActionMap implements Map<String, Runnable>, Consumer<String> {
         Box(Runnable value, String mainKey, List<String> keys) {
             this.value = value;
             this.mainKey = mainKey;
-            this.keys = keys;
+            this.keys = new LinkedList<>(keys);
         }
 
         Box(Runnable value, String mainKey) {
