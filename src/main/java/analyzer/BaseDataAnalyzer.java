@@ -32,6 +32,12 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
      * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
      */
     protected static final Consumer<List<Object>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
+    /**
+     * Takes a Counter and prints the String representation together with the Wilson Score confidence interval with a confidence of 0.95.
+     *
+     * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
+     */
+    protected static final Consumer<Counter<Object>> WILSON_CONFIDENCE_COUNTER = BaseDataAnalyzer::percentageBasedConfidence_counter;
 
     protected List<T> data;
 
@@ -132,6 +138,10 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
 
     private static <R> void percentageBasedConfidence(List<R> values) {
         Counter<R> counter = new Counter<>(values);
+        percentageBasedConfidence_counter(counter);
+    }
+
+    private static <R> void percentageBasedConfidence_counter(Counter<R> counter) {
         int total = counter.sum();
         counter.forEach((value, amount) -> println(
                 value + ": "
