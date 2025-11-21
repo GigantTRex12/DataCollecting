@@ -68,6 +68,8 @@ use-cases of doing so might be limited.
 Some static evaluators are provided by the [BaseDataAnalyzer](https://github.com/GigantTRex12/DataCollecting/blob/master/src/main/java/analyzer/BaseDataAnalyzer.java)
 but any other needed evaluators may be implemented. Currently available evaluators are:
 
-- SIMPLE_PERCENTAGES: Simply counts how many times certain Objects appear and calculates their percentages.
+- SIMPLE_PERCENTAGES: Simply counts how many times certain Objects appear in a List and calculates their percentages.
 - WILSON_CONFIDENCE: Calculates the percentages like SIMPLE_PERCENTAGES but also calculates a [Wilson Score Interval](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval)
 with a confidence of 95%.
+- WILSON_CONFIDENCE_COUNTER: Like WILSON_CONFIDENCE but takes an already filled [Counter](https://github.com/GigantTRex12/DataCollecting/blob/master/src/main/java/Utils/Counter.java)
+instead.
