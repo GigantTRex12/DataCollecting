@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OtherDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
+    private static final String OPTIONS = "Options: AddData (a); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
 
@@ -67,6 +68,7 @@ public class OtherDataCollectorTest extends TestWithOutputs {
 
         validateOutputs(new String[]{
                 WHAT_DO,
+                OPTIONS,
                 "Enter the name",
                 "Enter values in format value1|value2",
                 "Format: ^\\w*\\|\\w*$",
@@ -74,10 +76,12 @@ public class OtherDataCollectorTest extends TestWithOutputs {
                 "Enter values in format value1|value2",
                 "Format: ^\\w*\\|\\w*$",
                 WHAT_DO,
+                OPTIONS,
                 "Enter the name",
                 "Enter values in format value1|value2",
                 "Format: ^\\w*\\|\\w*$",
-                WHAT_DO
+                WHAT_DO,
+                OPTIONS
         });
     }
 

@@ -1,18 +1,18 @@
 package analyzer;
 
+import Utils.ActionMap;
 import Utils.Counter;
 import Utils.Utils;
 import dataset.BaseDataSet;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static Utils.InputUtils.input;
+import static java.lang.IO.print;
 import static java.lang.IO.println;
-import static java.util.Map.entry;
 
 /**
  * Class for Analyzing existing Data. Subclasses can override any relevant methods.
@@ -21,12 +21,6 @@ import static java.util.Map.entry;
  * @param <T> Type of Data to Analyze
  */
 public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
-
-    private static final Map<String, String> actions = Map.ofEntries(
-            entry("a", "Analyze"),
-            entry("p", "PrintData"),
-            entry("e", "Exit")
-    );
 
     /**
      * Takes a List of Objects and prints the String representation together with its percentage in the List.
@@ -38,11 +32,21 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
      * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
      */
     protected static final Consumer<List<Object>> WILSON_CONFIDENCE = BaseDataAnalyzer::percentageBasedConfidence;
+    /**
+     * Takes a Counter and prints the String representation together with the Wilson Score confidence interval with a confidence of 0.95.
+     *
+     * @see <a href="https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval">https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval</a>
+     */
+    protected static final Consumer<Counter<Object>> WILSON_CONFIDENCE_COUNTER = BaseDataAnalyzer::percentageBasedConfidence_counter;
 
-    protected final List<T> data;
+    protected List<T> data;
 
     protected final List<Question<T>> questions;
     protected final List<String> questionNames;
+
+    protected final ActionMap actions;
+
+    protected boolean running;
 
     public BaseDataAnalyzer(List<T> data) {
         this.data = data;
@@ -51,6 +55,11 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         if (questionNames.size() != new HashSet<>(questionNames).size()) {
             throw new IllegalStateException("Multiple Questions can't have the same name.");
         }
+        actions = new ActionMap();
+        actions.put("Analyze", this::analyzation, List.of("a"));
+        actions.put("PrintData", this::printData, List.of("p"));
+        actions.put("Exit", this::exit, List.of("e"));
+        running = false;
     }
 
     /**
@@ -59,14 +68,10 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
      * Performs the chosen action and loops back to the choice.
      */
     public void analyze() {
-        while (true) {
+        running = true;
+        while (running) {
             String action = inputAction();
-            if (action.equals("exit")) break;
-            switch (action) {
-                case ("analyze") -> analyzation();
-                case ("printdata") -> printData();
-                default -> println("Unknown action: " + action);
-            }
+            actions.acceptOrFallback(action, () -> print(action + " is not a valid option."));
         }
     }
 
@@ -102,8 +107,7 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
      * Method of inputting the action to choose in {@link BaseDataAnalyzer#analyze()}.
      */
     protected String inputAction() {
-        String action = input("What would you like to do?").toLowerCase();
-        return actions.getOrDefault(action, action).toLowerCase();
+        return input("What would you like to do?" + System.lineSeparator() + "Options: " + actions.keyReps("; ", "|"));
     }
 
     /**
@@ -113,6 +117,13 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
         for (T data : data) {
             println(data);
         }
+    }
+
+    /**
+     * Exits the loop in the {@link #analyze()} method, exiting the analyzer.
+     */
+    protected void exit() {
+        running = false;
     }
 
     private static <R> void simplePercentages(List<R> values) {
@@ -127,6 +138,10 @@ public abstract class BaseDataAnalyzer<T extends BaseDataSet> {
 
     private static <R> void percentageBasedConfidence(List<R> values) {
         Counter<R> counter = new Counter<>(values);
+        percentageBasedConfidence_counter(counter);
+    }
+
+    private static <R> void percentageBasedConfidence_counter(Counter<R> counter) {
         int total = counter.sum();
         counter.forEach((value, amount) -> println(
                 value + ": "

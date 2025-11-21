@@ -48,8 +48,9 @@ If using this for multiple different DataSets the created implementation of [Bas
 may be further extended once for each DataSet. Then implement the getQuestions() method for each DataSet. The Questions
 can easily be created with a Builder, see [Question](https://github.com/GigantTRex12/DataCollecting/blob/master/src/main/java/collector/Question.java)
 for details.  
-Optionally validateDataSet() or inputAction() may be overridden as needed. Note that any methods in the DataCollector
-are allowed to be overridden, however the use-cases of doing so might be limited.
+Optionally validateDataSet() or inputAction() may be overridden as needed. To add or modify actions the
+ActionMap actions can be modified. Note that any methods in the DataCollector are allowed to be overridden, however
+the use-cases of doing so might be limited.
 
 ### Create Analyzer
 
@@ -58,7 +59,8 @@ Class and implement a constructor which reads the Data (or alternatively just pa
 Data happens outside the Analyzer). Then implement the getQuestions() method for each DataSet. The Questions
 can easily be created with a Builder, see [Question](https://github.com/GigantTRex12/DataCollecting/blob/master/src/main/java/analyzer/Question.java)
 for details.  
-Note that any methods in the DataCollector are allowed to be overridden, however the use-cases of doing so might be
+To add or modify actions the ActionMap actions can be modified. Note that any methods in the DataCollector are allowed
+to be overridden, however the use-cases of doing so might be
 limited.
 
 #### -Evaluators-
