@@ -46,7 +46,7 @@ public record Question<T extends BaseDataSet>(
     /**
      * Builder for creating {@link Question} instances.
      *
-     * @param <T> Type parametetr of the Question to create.
+     * @param <T> Type parameter of the Question to create.
      */
     public static class Builder<T extends BaseDataSet> {
         private final String name;
