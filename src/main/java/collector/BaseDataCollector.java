@@ -69,9 +69,8 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     protected void addData() {
         Map<String, Object> typeMap = survey.run();
         T dataSet = mapToDataset(typeMap);
-        if (validateDataSet(dataSet)) {
-            this.data.add(dataSet);
-        }
+        if (validateDataSet(dataSet)) this.data.add(dataSet);
+        else this.onInvalidDataSet(dataSet);
     }
 
     /**
@@ -97,6 +96,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     protected boolean validateDataSet(BaseDataSet dataSet) {
         return true;
+    }
+
+    /**
+     * Called when a DataSet fails {@link BaseDataCollector#validateDataSet(BaseDataSet)}.
+     * @param dataSet The invalid DataSet
+     */
+    protected void onInvalidDataSet(T dataSet) {
+        println("Invalid Dataset: " + dataSet);
     }
 
     /**
