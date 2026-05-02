@@ -6,10 +6,13 @@ import dataset.BaseDataSet;
 import dataset.Metadata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static Utils.InputUtils.input;
+import static Utils.InputUtils.inputInt;
 import static java.lang.IO.println;
 
 /**
@@ -169,6 +172,24 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     protected void clearData() {
         this.data.clear();
+    }
+
+    protected void deleteDataset() {
+        printDataEnumerated();
+        String inp = input("Choose which datasets to be deleted (split multiple with ,)");
+        if (!Pattern.compile("^[1-9]\\d*(,[1-9]\\d*)*$").matcher(inp).find()) {
+            println("Invalid dataset selection.");
+        } else {
+            String[] choices = inp.split(",");
+            Arrays.stream(choices)
+                    .mapToInt(Integer::parseInt)
+                    .sorted()
+                    .boxed().toList()
+                    .reversed()
+                    .forEach(i -> this.data.remove(i));
+            println("Successfully deleted " + choices.length + " datasets.");
+            printData();
+        }
     }
 
     /**
