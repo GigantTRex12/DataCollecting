@@ -148,6 +148,15 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     /**
+     * Prints all collected and unsaved DataSets with 1 per line, enumerated starting with 1.
+     */
+    protected void printDataEnumerated() {
+        for (int i = 0; i < data.size(); i++) {
+            println((i + 1) + ": " + data.get(i));
+        }
+    }
+
+    /**
      * Called when the "save" action is executed.
      * <br>
      * When implementing this should end with a call of {@link BaseDataCollector#clearData()} on success

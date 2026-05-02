@@ -13,7 +13,7 @@ import static java.lang.System.lineSeparator;
  * Utility class to execute a sequence of {@link Question}s in order, collecting
  * validated and normalized answers into a {@link Map}.
  */
-class Survey {
+public class Survey {
 
     private final List<Question> questions;
     private final Map<Question, String> presetAnswers;
