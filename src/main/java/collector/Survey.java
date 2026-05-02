@@ -29,7 +29,7 @@ class Survey {
      *
      * @return a map of keys to validated, normalized user answers
      */
-    Map<String, Object> run() {
+    public Map<String, Object> run() {
         final Map<String, Object> answers = new HashMap<>();
         for (final Question question : questions) {
             if (!question.condition().test(answers)) continue;
@@ -80,17 +80,18 @@ class Survey {
         return true;
     }
 
-    void presetAnswers() {
+    public void presetAnswers() {
         clearPresetAnswers();
         println("Set the fixed answers. Leave empty to skip. Enter \\ for empty String.");
         for (final Question question : questions) {
+            if (!question.allowPreset()) continue;
             final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
             if (raw.equals("\\")) presetAnswers.put(question, "");
             else if (!raw.isEmpty()) presetAnswers.put(question, raw);
         }
     }
 
-    void clearPresetAnswers() {
+    public void clearPresetAnswers() {
         presetAnswers.clear();
     }
 

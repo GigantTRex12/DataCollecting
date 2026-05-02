@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import static Utils.InputUtils.input;
-import static java.lang.IO.print;
 import static java.lang.IO.println;
 
 /**
