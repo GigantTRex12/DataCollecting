@@ -18,14 +18,13 @@ class Survey {
     private final List<Question> questions;
     private final Map<Question, String> presetAnswers;
 
-    Survey(List<Question> questions) {
+    public Survey(List<Question> questions) {
         this.questions = Collections.unmodifiableList(questions);
         presetAnswers = new HashMap<>();
     }
 
     /**
-     * Runs the survey for a given list of {@link Question}s and returns all
-     * collected answers as a {@link Map}.
+     * Runs the survey for the questions and returns all collected answers as a {@link Map}.
      *
      * @return a map of keys to validated, normalized user answers
      */
@@ -80,6 +79,11 @@ class Survey {
         return true;
     }
 
+    /**
+     * Runs the Survey in a simplified way, without validating the answers. Stores the String responses as a preset,
+     * using the given answers instead of asking for new ones in {@link Survey#run()}. Empty answers are ignored.
+     * Clears any already existing presets before.
+     */
     public void presetAnswers() {
         clearPresetAnswers();
         println("Set the fixed answers. Leave empty to skip. Enter \\ for empty String.");
@@ -91,6 +95,9 @@ class Survey {
         }
     }
 
+    /**
+     * Clears out all answers given with {@link Survey#presetAnswers()}.
+     */
     public void clearPresetAnswers() {
         presetAnswers.clear();
     }

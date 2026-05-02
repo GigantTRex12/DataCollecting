@@ -13,10 +13,13 @@ import static java.lang.IO.println;
 
 class Survey {
 
-    static <T extends BaseDataSet> void run(Question<T> question, List<T> data) {
+    /**
+     * Runs the given questions against the given data
+     */
+    public static <T extends BaseDataSet> void run(Question<T> questions, List<T> data) {
         List<String> groupReps = new ArrayList<>();
         List<Function<T, ?>> groupings = new ArrayList<>();
-        for (GroupingDefinition<T> gd : question.groupings()) {
+        for (GroupingDefinition<T> gd : questions.groupings()) {
             if (!gd.forced()) {
                 String f = input("Do you want to group by " + gd.name() + "? (y|yes)").toLowerCase();
                 if (!(f.equals("yes") || f.equals("y"))) continue;
@@ -26,11 +29,11 @@ class Survey {
         }
 
         if (groupings.isEmpty()) {
-            question.evaluator().accept(data.stream().filter(question.conditionAll()).toList());
+            questions.evaluator().accept(data.stream().filter(questions.conditionAll()).toList());
             return;
         }
         Map<List<?>, List<T>> groupedData = data.stream()
-                .filter(question.conditionAll())
+                .filter(questions.conditionAll())
                 .collect(Collectors.groupingBy(t -> {
                     List<Object> list = new ArrayList<>();
                     groupings.forEach(g -> list.add(g.apply(t)));
@@ -41,7 +44,7 @@ class Survey {
             println(values.size() + " grouped Datasets with:");
             println(String.join(", ", groupReps));
             println(keys.stream().map(String::valueOf).collect(Collectors.joining(", ")));
-            question.evaluator().accept(values);
+            questions.evaluator().accept(values);
         });
     }
 
