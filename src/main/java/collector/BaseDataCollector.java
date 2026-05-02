@@ -94,7 +94,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Called before adding a new DataSet to validate it.
      * If this returns false for a DataSet the DataSet will be discarded.
      */
-    protected boolean validateDataSet(BaseDataSet dataSet) {
+    protected boolean validateDataSet(T dataSet) {
         return true;
     }
 
