@@ -65,8 +65,8 @@ public class InputUtils {
     public static int inputInt() {
         while (true) {
             String inp = input();
-            if (Pattern.compile("^[1-9]\\d+$").matcher(inp).hasMatch()) return Integer.parseInt(inp);
-            println("Input " + inp + " is not a valid Integer.");
+            if (Pattern.compile("^[1-9]\\d*$").matcher(inp).find()) return Integer.parseInt(inp);
+            println("Input \"" + inp + "\" is not a valid Integer.");
         }
     }
 
@@ -77,8 +77,8 @@ public class InputUtils {
     public static int inputInt(String message) {
         while (true) {
             String inp = input(message);
-            if (Pattern.compile("^[1-9]\\d+$").matcher(inp).hasMatch()) return Integer.parseInt(inp);
-            println("Input " + inp + " is not a valid Integer.");
+            if (Pattern.compile("^[1-9]\\d*$").matcher(inp).find()) return Integer.parseInt(inp);
+            println("Input \"" + inp + "\" is not a valid Integer.");
         }
     }
 
