@@ -74,10 +74,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         }
     }
 
+    /**
+     * Requests the user to input a number, then runs {@link BaseDataCollector#addData()} that many times.
+     * Executes {@link BaseDataCollector#printMultipleSep(int, int)} for each Dataset to be added.
+     */
     protected void addMultipleDatasets() {
         int amount = InputUtils.inputInt("How many datasets do you want to add?");
         for (int i = 1; i <= amount; i++) {
-            printMultipleSep(i);
+            printMultipleSep(i, amount);
             this.addData();
         }
     }
@@ -95,8 +99,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         return true;
     }
 
-    protected void printMultipleSep(int pos) {
-        println("----- Adding dataset number " + pos + " -----");
+    /**
+     * Called when adding multiple Datasets with {@link BaseDataCollector#addMultipleDatasets()} to print a separator
+     * message.
+     * @param pos The number, which Dataset is being added.
+     * @param max The total number of Datasets being added.
+     */
+    protected void printMultipleSep(int pos, int max) {
+        println("----- Adding dataset number " + pos + " out of " + max + " -----");
     }
 
     /**
