@@ -1,6 +1,7 @@
 package collector;
 
 import Utils.ActionMap;
+import Utils.InputUtils;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 
@@ -33,6 +34,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         survey = new Survey(getQuestions());
         actions = new ActionMap();
         actions.put("AddData", this::addData, List.of("a"));
+        actions.put("AddDataMultiple", this::addMultipleDatasets, List.of("am"));
         actions.put("ClearData", this::clearData, List.of("c"));
         actions.put("Save", this::saveData, List.of("s"));
         actions.put("PrintData", this::printData, List.of("p"));
@@ -72,6 +74,14 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         }
     }
 
+    protected void addMultipleDatasets() {
+        int amount = InputUtils.inputInt("How many datasets do you want to add?");
+        for (int i = 1; i <= amount; i++) {
+            printMultipleSep(i);
+            this.addData();
+        }
+    }
+
     /**
      * Used to get an ordered List of all {@link Question} needed to create corresponding DataSets.
      */
@@ -83,6 +93,10 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     protected boolean validateDataSet(BaseDataSet dataSet) {
         return true;
+    }
+
+    protected void printMultipleSep(int pos) {
+        println("----- Adding dataset number " + pos + " -----");
     }
 
     /**
