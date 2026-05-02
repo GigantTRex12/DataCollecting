@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OtherDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
-    private static final String OPTIONS = "Options: AddData (a); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
+    private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
 

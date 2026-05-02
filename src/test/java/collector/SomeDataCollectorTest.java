@@ -21,7 +21,9 @@ public class SomeDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
     private static final String FIX = "fc";
-    private static final String OPTIONS = "Options: AddData (a); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
+    private static final String ADD_MULTIPLE = "am";
+    private static final String END = "e";
+    private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final String FIX_MSG = "Set the fixed answers. Leave empty to skip. Enter \\ for empty String.";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
@@ -59,7 +61,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 .line(ADD)
                 .line("test3")
                 .line(0)
-                .line("e")
+                .line(END)
                 .set();
 
         SomeDataSet expected1 = new SomeDataSet(METADATA_EXAMPLE, "test", 7, null);
@@ -131,7 +133,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 .line("\\")
                 .line(ADD)
                 .line("longname")
-                .line("e")
+                .line(END)
                 .set();
 
         SomeDataSet expected1 = new SomeDataSet(METADATA_EXAMPLE, "name", 50, "Value is: bla");
@@ -189,6 +191,65 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 WHAT_DO,
                 OPTIONS,
                 "Enter some name",
+                WHAT_DO,
+                OPTIONS
+        });
+    }
+
+    @Test
+    void addMultiple() throws IOException {
+        // given
+        InputBuilder.start()
+                .line(ADD_MULTIPLE)
+                .line("NaN")
+                .line(3)
+                .line("test")
+                .line(5)
+                .line("test2")
+                .line("NaN")
+                .line(12)
+                .line("value")
+                .line("test3")
+                .line(0)
+                .line(END)
+                .set();
+
+        SomeDataSet expected1 = new SomeDataSet(METADATA_EXAMPLE, "test", 5, null);
+        SomeDataSet expected2 = new SomeDataSet(METADATA_EXAMPLE, "test2", 12, "Value is: value");
+        SomeDataSet expected3 = new SomeDataSet(METADATA_EXAMPLE, "test3", 0, null);
+
+        // when
+        collector.collect();
+
+        // then
+        List<String> content = getContent();
+        assertEquals(3, content.size());
+        assertEquals(toJson(expected1), content.get(0));
+        assertEquals(toJson(expected2), content.get(1));
+        assertEquals(toJson(expected3), content.get(2));
+
+        validateOutputs(new String[]{
+                WHAT_DO,
+                OPTIONS,
+                "How many datasets do you want to add?",
+                "Input \"NaN\" is not a valid Integer.",
+                "How many datasets do you want to add?",
+                "----- Adding dataset number 1 out of 3 -----",
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "----- Adding dataset number 2 out of 3 -----",
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "Invalid input: Input needs to match pattern ^0$|^[1-9]\\d*$",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "Enter some value",
+                "----- Adding dataset number 3 out of 3 -----",
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
                 WHAT_DO,
                 OPTIONS
         });

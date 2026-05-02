@@ -3,6 +3,7 @@ package Utils;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 import static java.lang.IO.println;
 import static java.lang.IO.readln;
@@ -55,6 +56,30 @@ public class InputUtils {
     public static String multilineInput(String message) {
         println(message);
         return multilineInput();
+    }
+
+    /**
+     * Reads one line of console input and returns it as an Integer.
+     * If the input is not valid repeats until a valid Integer is entered.
+     */
+    public static int inputInt() {
+        while (true) {
+            String inp = input();
+            if (Pattern.compile("^[1-9]\\d*$").matcher(inp).find()) return Integer.parseInt(inp);
+            println("Input \"" + inp + "\" is not a valid Integer.");
+        }
+    }
+
+    /**
+     * Prints the message then reads one line of console input and returns it as an Integer.
+     * If the input is not valid repeats until a valid Integer is entered.
+     */
+    public static int inputInt(String message) {
+        while (true) {
+            String inp = input(message);
+            if (Pattern.compile("^[1-9]\\d*$").matcher(inp).find()) return Integer.parseInt(inp);
+            println("Input \"" + inp + "\" is not a valid Integer.");
+        }
     }
 
     private static synchronized BufferedReader reader() {

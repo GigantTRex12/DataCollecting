@@ -19,6 +19,7 @@ public class ActionTestDataCollector extends AbstractDataCollector<SomeDataSet> 
         actions.remove("A");
         actions.remove("cc");
         actions.remove("c");
+        actions.remove("am");
         actions.replace("p", () -> println("print"));
         actions.removeKeys("f", "s", "save");
         actions.renameKey("pickmetadata", "mmm");

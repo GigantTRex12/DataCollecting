@@ -1,6 +1,7 @@
 package collector;
 
 import Utils.ActionMap;
+import Utils.InputUtils;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 
@@ -33,6 +34,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         survey = new Survey(getQuestions());
         actions = new ActionMap();
         actions.put("AddData", this::addData, List.of("a"));
+        actions.put("AddDataMultiple", this::addMultipleDatasets, List.of("am"));
         actions.put("ClearData", this::clearData, List.of("c"));
         actions.put("Save", this::saveData, List.of("s"));
         actions.put("PrintData", this::printData, List.of("p"));
@@ -73,6 +75,18 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     /**
+     * Requests the user to input a number, then runs {@link BaseDataCollector#addData()} that many times.
+     * Executes {@link BaseDataCollector#printMultipleSep(int, int)} for each Dataset to be added.
+     */
+    protected void addMultipleDatasets() {
+        int amount = InputUtils.inputInt("How many datasets do you want to add?");
+        for (int i = 1; i <= amount; i++) {
+            printMultipleSep(i, amount);
+            this.addData();
+        }
+    }
+
+    /**
      * Used to get an ordered List of all {@link Question} needed to create corresponding DataSets.
      */
     protected abstract List<Question> getQuestions();
@@ -83,6 +97,16 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      */
     protected boolean validateDataSet(BaseDataSet dataSet) {
         return true;
+    }
+
+    /**
+     * Called when adding multiple Datasets with {@link BaseDataCollector#addMultipleDatasets()} to print a separator
+     * message.
+     * @param pos The number, which Dataset is being added.
+     * @param max The total number of Datasets being added.
+     */
+    protected void printMultipleSep(int pos, int max) {
+        println("----- Adding dataset number " + pos + " out of " + max + " -----");
     }
 
     /**
