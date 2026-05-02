@@ -34,7 +34,8 @@ public record Question(
         BiFunction<String, Map<String, Object>, Optional<String>> validator,
         // on multilines this validates each line separately
         NormalizerBiConsumer normalizer,
-        boolean multiline
+        boolean multiline,
+        boolean allowPreset
 ) {
     public Question {
         requireNonNull(key);
@@ -59,6 +60,7 @@ public record Question(
         protected NormalizerBiConsumer normalizer;
         protected boolean multiline = false;
         protected String conditionPrompt;
+        private boolean allowPreset = true;
 
         protected Builder(final String key, final String prompt) {
             this.key = key;
@@ -83,6 +85,11 @@ public record Question(
 
         public Builder multiline() {
             multiline = true;
+            return this;
+        }
+
+        public Builder dontAllowPreset() {
+            allowPreset = false;
             return this;
         }
 
@@ -181,7 +188,8 @@ public record Question(
                     condition,
                     validator,
                     normalizer,
-                    multiline
+                    multiline,
+                    allowPreset
             );
         }
     }

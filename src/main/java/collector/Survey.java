@@ -18,18 +18,17 @@ class Survey {
     private final List<Question> questions;
     private final Map<Question, String> presetAnswers;
 
-    Survey(List<Question> questions) {
+    public Survey(List<Question> questions) {
         this.questions = Collections.unmodifiableList(questions);
         presetAnswers = new HashMap<>();
     }
 
     /**
-     * Runs the survey for a given list of {@link Question}s and returns all
-     * collected answers as a {@link Map}.
+     * Runs the survey for the questions and returns all collected answers as a {@link Map}.
      *
      * @return a map of keys to validated, normalized user answers
      */
-    Map<String, Object> run() {
+    public Map<String, Object> run() {
         final Map<String, Object> answers = new HashMap<>();
         for (final Question question : questions) {
             if (!question.condition().test(answers)) continue;
@@ -80,17 +79,26 @@ class Survey {
         return true;
     }
 
-    void presetAnswers() {
+    /**
+     * Runs the Survey in a simplified way, without validating the answers. Stores the String responses as a preset,
+     * using the given answers instead of asking for new ones in {@link Survey#run()}. Empty answers are ignored.
+     * Clears any already existing presets before.
+     */
+    public void presetAnswers() {
         clearPresetAnswers();
         println("Set the fixed answers. Leave empty to skip. Enter \\ for empty String.");
         for (final Question question : questions) {
+            if (!question.allowPreset()) continue;
             final String raw = question.multiline() ? multilineInput(question.prompt()) : input(question.prompt());
             if (raw.equals("\\")) presetAnswers.put(question, "");
             else if (!raw.isEmpty()) presetAnswers.put(question, raw);
         }
     }
 
-    void clearPresetAnswers() {
+    /**
+     * Clears out all answers given with {@link Survey#presetAnswers()}.
+     */
+    public void clearPresetAnswers() {
         presetAnswers.clear();
     }
 

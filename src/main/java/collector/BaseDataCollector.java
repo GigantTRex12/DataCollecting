@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import static Utils.InputUtils.input;
-import static java.lang.IO.print;
 import static java.lang.IO.println;
 
 /**
@@ -69,9 +68,8 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     protected void addData() {
         Map<String, Object> typeMap = survey.run();
         T dataSet = mapToDataset(typeMap);
-        if (validateDataSet(dataSet)) {
-            this.data.add(dataSet);
-        }
+        if (validateDataSet(dataSet)) this.data.add(dataSet);
+        else this.onInvalidDataSet(dataSet);
     }
 
     /**
@@ -95,8 +93,16 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Called before adding a new DataSet to validate it.
      * If this returns false for a DataSet the DataSet will be discarded.
      */
-    protected boolean validateDataSet(BaseDataSet dataSet) {
+    protected boolean validateDataSet(T dataSet) {
         return true;
+    }
+
+    /**
+     * Called when a DataSet fails {@link BaseDataCollector#validateDataSet(BaseDataSet)}.
+     * @param dataSet The invalid DataSet
+     */
+    protected void onInvalidDataSet(T dataSet) {
+        println("Invalid Dataset: " + dataSet);
     }
 
     /**
