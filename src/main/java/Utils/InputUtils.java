@@ -59,7 +59,7 @@ public class InputUtils {
     }
 
     /**
-     * Reads one line of console input and returns it as an Integer.
+     * Reads one line of console input and returns it as a positive Integer.
      * If the input is not valid repeats until a valid Integer is entered.
      */
     public static int inputInt() {
@@ -71,7 +71,7 @@ public class InputUtils {
     }
 
     /**
-     * Prints the message then reads one line of console input and returns it as an Integer.
+     * Prints the message then reads one line of console input and returns it as a positive Integer.
      * If the input is not valid repeats until a valid Integer is entered.
      */
     public static int inputInt(String message) {
