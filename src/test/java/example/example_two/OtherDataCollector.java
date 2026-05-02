@@ -27,6 +27,7 @@ public class OtherDataCollector extends AbstractDataCollector<OtherDataSet> {
                                 Map.entry("value1", answer -> answer.split("\\|")[0]),
                                 Map.entry("value2", answer -> answer.split("\\|")[1])
                         ))
+                        .dontAllowPreset()
                         .build()
         );
     }

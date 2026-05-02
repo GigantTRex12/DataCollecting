@@ -20,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OtherDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
+    private static final String FIX = "fc";
+    private static final String END = "e";
     private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
@@ -51,7 +53,7 @@ public class OtherDataCollectorTest extends TestWithOutputs {
                 .line(ADD)
                 .line("")
                 .line("value1|value2")
-                .line("e")
+                .line(END)
                 .set();
 
         OtherDataSet expected1 = new OtherDataSet(METADATA_EXAMPLE, "name", "test1", "test2");
@@ -78,6 +80,49 @@ public class OtherDataCollectorTest extends TestWithOutputs {
                 WHAT_DO,
                 OPTIONS,
                 "Enter the name",
+                "Enter values in format value1|value2",
+                "Format: ^\\w*\\|\\w*$",
+                WHAT_DO,
+                OPTIONS
+        });
+    }
+
+    @Test
+    void fixChoices() throws IOException {
+        // given
+        InputBuilder.start()
+                .line(FIX)
+                .line("name")
+                .line(ADD)
+                .line("test1|test2")
+                .line(ADD)
+                .line("value1|value2")
+                .line(END)
+                .set();
+
+        OtherDataSet expected1 = new OtherDataSet(METADATA_EXAMPLE, "name", "test1", "test2");
+        OtherDataSet expected2 = new OtherDataSet(METADATA_EXAMPLE, "name", "value1", "value2");
+
+        // when
+        collector.collect();
+
+        // then
+        List<String> content = getContent();
+        assertEquals(2, content.size());
+        assertEquals(toJson(expected1), content.get(0));
+        assertEquals(toJson(expected2), content.get(1));
+
+        validateOutputs(new String[]{
+                WHAT_DO,
+                OPTIONS,
+                "Set the fixed answers. Leave empty to skip. Enter \\ for empty String.",
+                "Enter the name",
+                WHAT_DO,
+                OPTIONS,
+                "Enter values in format value1|value2",
+                "Format: ^\\w*\\|\\w*$",
+                WHAT_DO,
+                OPTIONS,
                 "Enter values in format value1|value2",
                 "Format: ^\\w*\\|\\w*$",
                 WHAT_DO,
