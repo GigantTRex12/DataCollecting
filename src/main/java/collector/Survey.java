@@ -15,6 +15,8 @@ import static java.lang.System.lineSeparator;
  */
 public class Survey {
 
+    private static final String INVALID = "Invalid input: ";
+
     private final List<Question> questions;
     private final Map<Question, String> presetAnswers;
 
@@ -41,7 +43,7 @@ public class Survey {
                         question.normalizer().accept(preset, answers);
                         continue;
                     } catch (InvalidInputFormatException e) {
-                        println("Invalid input: " + e.getMessage());
+                        println(INVALID + e.getMessage());
                         presetAnswers.remove(question);
                     }
                 }
@@ -55,7 +57,7 @@ public class Survey {
                 try {
                     question.normalizer().accept(raw, answers);
                 } catch (InvalidInputFormatException e) {
-                    println("Invalid input: " + e.getMessage());
+                    println(INVALID + e.getMessage());
                     continue;
                 }
                 break;
@@ -73,7 +75,7 @@ public class Survey {
             }
         } else error = question.validator().apply(input, answers);
         if (error.isPresent()) {
-            println("Invalid input: " + error.get());
+            println(INVALID + error.get());
             return false;
         }
         return true;

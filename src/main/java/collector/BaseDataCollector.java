@@ -147,8 +147,8 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
             println("No datasets");
             return;
         }
-        for (T data : data) {
-            println(data);
+        for (T dataSet : data) {
+            println(dataSet);
         }
     }
 
@@ -187,7 +187,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         }
         printDataEnumerated();
         String inp = input("Choose which datasets to be deleted (split multiple with ',')");
-        if (!Pattern.compile("^[1-9]\\d*(,[1-9]\\d*)*$").matcher(inp).find()) {
+        if (!Pattern.compile("^[1-9]\\d*(,[1-9]\\d*)*+$").matcher(inp).find()) {
             println("Invalid dataset selection.");
         } else {
             String[] choices = inp.split(",");

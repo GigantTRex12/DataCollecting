@@ -6,7 +6,7 @@ import java.util.Map;
 
 public abstract class MapDataCollector extends BaseDataCollector<MapDataSet> {
 
-    public MapDataCollector() {
+    protected MapDataCollector() {
         super();
     }
 
