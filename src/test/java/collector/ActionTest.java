@@ -8,7 +8,7 @@ import testutils.TestWithOutputs;
 
 import java.io.IOException;
 
-public class ActionTest extends TestWithOutputs {
+class ActionTest extends TestWithOutputs {
 
     private static final String OPTIONS = "Options: PrintData (p); FixChoices (fc); Exit (e); test1; test2 (t2|tt2); TEst3 (t3); mmm (m); sss (ssss)";
     private static final String WHAT_DO = "What would you like to do?";

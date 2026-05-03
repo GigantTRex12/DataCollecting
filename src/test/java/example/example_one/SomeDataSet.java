@@ -28,4 +28,9 @@ public class SomeDataSet extends AbstractDataSet {
         return someValue;
     }
 
+    @Override
+    public String toString() {
+        return name + ":" + number + (someValue != null ? someValue : "");
+    }
+
 }

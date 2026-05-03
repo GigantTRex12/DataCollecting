@@ -166,8 +166,8 @@ public record Question(
          */
         public Builder normalizers(final Map<String, ThrowingFunction<String, Object, InvalidInputFormatException>> parsers) {
             normalizer = (answer, map) -> {
-                for (String key : parsers.keySet()) {
-                    map.put(key, parsers.get(key).apply(answer));
+                for (Map.Entry<String, ThrowingFunction<String, Object, InvalidInputFormatException>> entry : parsers.entrySet()) {
+                    map.put(entry.getKey(), entry.getValue().apply(answer));
                 }
             };
             return this;

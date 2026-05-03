@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import static Utils.InputUtils.input;
 import static java.lang.IO.println;
 
-class Survey {
+public class Survey {
 
     /**
      * Runs the given questions against the given data

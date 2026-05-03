@@ -13,7 +13,9 @@ import static java.lang.System.lineSeparator;
  * Utility class to execute a sequence of {@link Question}s in order, collecting
  * validated and normalized answers into a {@link Map}.
  */
-class Survey {
+public class Survey {
+
+    private static final String INVALID = "Invalid input: ";
 
     private final List<Question> questions;
     private final Map<Question, String> presetAnswers;
@@ -41,7 +43,7 @@ class Survey {
                         question.normalizer().accept(preset, answers);
                         continue;
                     } catch (InvalidInputFormatException e) {
-                        println("Invalid input: " + e.getMessage());
+                        println(INVALID + e.getMessage());
                         presetAnswers.remove(question);
                     }
                 }
@@ -55,7 +57,7 @@ class Survey {
                 try {
                     question.normalizer().accept(raw, answers);
                 } catch (InvalidInputFormatException e) {
-                    println("Invalid input: " + e.getMessage());
+                    println(INVALID + e.getMessage());
                     continue;
                 }
                 break;
@@ -73,7 +75,7 @@ class Survey {
             }
         } else error = question.validator().apply(input, answers);
         if (error.isPresent()) {
-            println("Invalid input: " + error.get());
+            println(INVALID + error.get());
             return false;
         }
         return true;

@@ -12,18 +12,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static example.JsonUtils.toJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SomeDataCollectorTest extends TestWithOutputs {
+class SomeDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
     private static final String FIX = "fc";
     private static final String ADD_MULTIPLE = "am";
+    private static final String DELETE = "d";
     private static final String END = "e";
-    private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
+    private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Delete (d); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final String FIX_MSG = "Set the fixed answers. Leave empty to skip. Enter \\ for empty String.";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
@@ -41,7 +41,7 @@ public class SomeDataCollectorTest extends TestWithOutputs {
 
     private List<String> getContent() throws IOException {
         return Files.readAllLines(tempfile).stream()
-                .filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
+                .filter(s -> !s.trim().isEmpty()).toList();
     }
 
     @Test
@@ -250,6 +250,77 @@ public class SomeDataCollectorTest extends TestWithOutputs {
                 "Enter some name",
                 "Enter some number",
                 "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                OPTIONS
+        });
+    }
+
+    @Test
+    void delete() throws IOException {
+        // given
+        InputBuilder.start()
+                .line(ADD)
+                .line("test")
+                .line(7)
+                .line(ADD)
+                .line("test2")
+                .line(8)
+                .line(ADD)
+                .line("test3")
+                .line(15)
+                .line("value")
+                .line(ADD)
+                .line("test4")
+                .line(9)
+                .line(DELETE)
+                .line("2,4")
+                .line(END)
+                .set();
+
+        SomeDataSet expected1 = new SomeDataSet(METADATA_EXAMPLE, "test", 7, null);
+        SomeDataSet expected2 = new SomeDataSet(METADATA_EXAMPLE, "test3", 15, "Value is: value");
+
+        // when
+        collector.collect();
+
+        // then
+        List<String> content = getContent();
+        assertEquals(2, content.size());
+        assertEquals(toJson(expected1), content.get(0));
+        assertEquals(toJson(expected2), content.get(1));
+
+        validateOutputs(new String[]{
+                WHAT_DO,
+                OPTIONS,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                OPTIONS,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                OPTIONS,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                "Enter some value",
+                WHAT_DO,
+                OPTIONS,
+                "Enter some name",
+                "Enter some number",
+                "Format: ^0$|^[1-9]\\d*$",
+                WHAT_DO,
+                OPTIONS,
+                "1: test:7",
+                "2: test2:8",
+                "3: test3:15Value is: value",
+                "4: test4:9",
+                "Choose which datasets to be deleted (split multiple with ',')",
+                "Successfully deleted 2 datasets.",
+                "test:7",
+                "test3:15Value is: value",
                 WHAT_DO,
                 OPTIONS
         });

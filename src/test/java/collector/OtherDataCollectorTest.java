@@ -12,17 +12,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static example.JsonUtils.toJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OtherDataCollectorTest extends TestWithOutputs {
+class OtherDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
     private static final String FIX = "fc";
     private static final String END = "e";
-    private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
+    private static final String OPTIONS = "Options: AddData (a); AddDataMultiple (am); ClearData (c); Delete (d); Save (s); PrintData (p); PickMetadata (m); FixChoices (f|fc); ClearFixedChoices (cc); Exit (e)";
     private static final String WHAT_DO = "What would you like to do?";
     private static final MetadataExample METADATA_EXAMPLE = new MetadataExample("Test");
 
@@ -39,7 +38,7 @@ public class OtherDataCollectorTest extends TestWithOutputs {
 
     private List<String> getContent() throws IOException {
         return Files.readAllLines(tempfile).stream()
-                .filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
+                .filter(s -> !s.trim().isEmpty()).toList();
     }
 
     @Test

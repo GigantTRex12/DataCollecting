@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class FileUtils {
 
-    private static final String lineSeperator = System.lineSeparator();
+    private static final String LINE_SEPERATOR = System.lineSeparator();
 
     private static void create(File file) throws IOException {
         if (!file.createNewFile()) {
@@ -28,7 +28,7 @@ public class FileUtils {
         Scanner scanner = new Scanner(file);
         StringBuilder result = new StringBuilder();
         while (scanner.hasNextLine()) {
-            result.append(scanner.nextLine()).append(lineSeperator);
+            result.append(scanner.nextLine()).append(LINE_SEPERATOR);
         }
         scanner.close();
         return result.toString().strip();
@@ -51,7 +51,7 @@ public class FileUtils {
     public static void append(String filename, String content) throws IOException {
         File file = new File(filename);
         if (file.exists()) {
-            String fullContent = read(file) + lineSeperator + content;
+            String fullContent = read(file) + LINE_SEPERATOR + content;
             fullContent = fullContent.strip();
             overwrite(file, fullContent);
         }
