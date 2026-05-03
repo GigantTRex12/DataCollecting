@@ -10,7 +10,7 @@ import testutils.TestWithOutputs;
 import java.io.IOException;
 import java.util.List;
 
-public class SomeDataAnalyzerTest extends TestWithOutputs {
+class SomeDataAnalyzerTest extends TestWithOutputs {
 
     private static final MetadataExample M = new MetadataExample();
 

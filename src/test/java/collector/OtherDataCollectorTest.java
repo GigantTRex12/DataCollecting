@@ -12,12 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static example.JsonUtils.toJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OtherDataCollectorTest extends TestWithOutputs {
+class OtherDataCollectorTest extends TestWithOutputs {
 
     private static final String ADD = "a";
     private static final String FIX = "fc";
@@ -39,7 +38,7 @@ public class OtherDataCollectorTest extends TestWithOutputs {
 
     private List<String> getContent() throws IOException {
         return Files.readAllLines(tempfile).stream()
-                .filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
+                .filter(s -> !s.trim().isEmpty()).toList();
     }
 
     @Test
