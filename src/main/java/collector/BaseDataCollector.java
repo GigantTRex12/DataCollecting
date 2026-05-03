@@ -5,14 +5,11 @@ import Utils.InputUtils;
 import dataset.BaseDataSet;
 import dataset.Metadata;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static Utils.InputUtils.input;
-import static Utils.InputUtils.inputInt;
 import static java.lang.IO.println;
 
 /**
@@ -38,6 +35,7 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
         actions.put("AddData", this::addData, List.of("a"));
         actions.put("AddDataMultiple", this::addMultipleDatasets, List.of("am"));
         actions.put("ClearData", this::clearData, List.of("c"));
+        actions.put("Delete", this::deleteDataset, List.of("d"));
         actions.put("Save", this::saveData, List.of("s"));
         actions.put("PrintData", this::printData, List.of("p"));
         actions.put("PickMetadata", this::setMetadata, List.of("m"));
@@ -145,6 +143,10 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Prints all collected and unsaved DataSets with 1 per line.
      */
     protected void printData() {
+        if (data.isEmpty()) {
+            println("No datasets");
+            return;
+        }
         for (T data : data) {
             println(data);
         }
@@ -154,6 +156,10 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
      * Prints all collected and unsaved DataSets with 1 per line, enumerated starting with 1.
      */
     protected void printDataEnumerated() {
+        if (data.isEmpty()) {
+            println("No datasets");
+            return;
+        }
         for (int i = 0; i < data.size(); i++) {
             println((i + 1) + ": " + data.get(i));
         }
@@ -175,18 +181,27 @@ public abstract class BaseDataCollector<T extends BaseDataSet> {
     }
 
     protected void deleteDataset() {
+        if (this.data.isEmpty()) {
+            println("There are no datasets to delete");
+            return;
+        }
         printDataEnumerated();
-        String inp = input("Choose which datasets to be deleted (split multiple with ,)");
+        String inp = input("Choose which datasets to be deleted (split multiple with ',')");
         if (!Pattern.compile("^[1-9]\\d*(,[1-9]\\d*)*$").matcher(inp).find()) {
             println("Invalid dataset selection.");
         } else {
             String[] choices = inp.split(",");
-            Arrays.stream(choices)
-                    .mapToInt(Integer::parseInt)
-                    .sorted()
-                    .boxed().toList()
-                    .reversed()
-                    .forEach(i -> this.data.remove(i));
+            Set<Integer> delete = Arrays.stream(choices)
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
+            List<T> newData = new ArrayList<>();
+            for (int i = 0; i < this.data.size(); i++) {
+                if (!delete.contains(i + 1)) {
+                    newData.add(this.data.get(i));
+                }
+            }
+            assert newData.size() + delete.size() == this.data.size();
+            this.data = newData;
             println("Successfully deleted " + choices.length + " datasets.");
             printData();
         }
