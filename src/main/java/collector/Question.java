@@ -135,7 +135,8 @@ public record Question(
         }
 
         /**
-         * Forces the user input to be one of the given options from either array (case-insensitive) and adjusts the prompt.
+         * Forces the user input to be one of the given options from either array (case-insensitive) and adjusts the
+         * prompt.
          */
         public Builder options(String[] options1, String[] options2) {
             validator = (s, _) -> {
@@ -188,6 +189,10 @@ public record Question(
 
         // Set the validator and normalizer for specific (primitive) types
 
+        /**
+         * Forces the user input to be an integer and sets the normalizer to parse the input to an integer and adjusts
+         * the prompt.
+         */
         public Builder toInt() {
             return this
                     .regex("-?[1-9]\\d*|0")
@@ -195,6 +200,21 @@ public record Question(
                     .normalize(s -> Integer.parseInt(s));
         }
 
+        /**
+         * Forces the user input to be a positive integer and sets the normalizer to parse the input to an integer and
+         * adjusts the prompt.
+         */
+        public Builder toPositiveInt() {
+            return this
+                    .regex("[1-9]\\d*|0")
+                    .conditionPrompt("Input a positive whole number")
+                    .normalize(s -> Integer.parseInt(s));
+        }
+
+        /**
+         * Forces the user input to be a float and sets the normalizer to parse the input to a float and adjusts the
+         * prompt.
+         */
         public Builder toFloat() {
             return this
                     .regex("-?[1-9]\\d*\\.?\\d*|0|-?0?\\.\\d+")
@@ -202,24 +222,69 @@ public record Question(
                     .normalize(Float::parseFloat);
         }
 
+        /**
+         * Forces the user input to be a positive float and sets the normalizer to parse the input to a float and
+         * adjusts the prompt.
+         */
+        public Builder toPositiveFloat() {
+            return this
+                    .regex("[1-9]\\d*\\.?\\d*|0|0?\\.\\d+")
+                    .conditionPrompt("Input a number")
+                    .normalize(Float::parseFloat);
+        }
+
+        /**
+         * Forces the user input to be a single character and sets the normalizer to parse the input to a char and
+         * adjusts the prompt.
+         */
         public Builder toChar() {
             this.validator = (s, _) -> s.length() == 1 ? Optional.empty() : Optional.of("Input can only have one character");
             this.conditionPrompt = "Input a single character";
             return this.normalize(s -> s.charAt(0));
         }
 
+        /**
+         * Forces the user input to be "yes" or "no" (case-insensitive) and sets the normalizer to parse the input to a
+         * boolean and adjusts the prompt.
+         */
         public Builder toBool() {
             return this.toBool("Yes", "No");
         }
 
+        /**
+         * Sets the normalizer to return true only if the given String is entered (case-insensitive) and false
+         * otherwise.
+         * @param yes The String for which the parser will return true
+         */
         public Builder toBool(final String yes) {
             return this.normalize(s -> s.equalsIgnoreCase(yes));
         }
 
+        /**
+         * Forces the user input to be one of the given Strings (case-insensitive) and sets the normalizer to parse the
+         * input to a boolean.
+         * @param yes The String for which the parser will return true
+         * @param no The String for which the parser will return false
+         */
         public Builder toBool(final String yes, final String no) {
             return this
                     .options(new String[]{yes, no})
                     .normalize(s -> s.equalsIgnoreCase(yes));
+        }
+
+        /**
+         * Forces the user input to be one of the given Strings (case-insensitive) and sets the normalizer to parse the
+         * input to a boolean and adjusts the prompt.
+         * @param yes Array of Strings for which the parser will return true.
+         * @param no Array of Strings for which the parser will return false.
+         * @throws IllegalArgumentException If either of the input Arrays is empty.
+         */
+        public Builder toBool(final String[] yes, final String[] no) {
+            if (yes.length < 1 || no.length < 1) throw new IllegalArgumentException("Arrays need to contain at least one element");
+            return this
+                    .options(yes, no)
+                    .normalize(s -> Arrays.stream(yes).anyMatch(a -> a.equalsIgnoreCase(s)))
+                    .conditionPrompt(String.join("|", yes) + " - " + String.join("|", no));
         }
 
         public Question build() {
