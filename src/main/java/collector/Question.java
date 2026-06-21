@@ -67,6 +67,11 @@ public record Question(
             this.prompt = prompt;
         }
 
+        private Builder conditionPrompt(final String prompt) {
+            this.conditionPrompt = prompt;
+            return this;
+        }
+
         public Builder when(final Predicate<Map<String, Object>> condition) {
             this.condition = condition;
             return this;
@@ -179,6 +184,42 @@ public record Question(
         public Builder dontValidate() {
             this.validator = null;
             return this;
+        }
+
+        // Set the validator and normalizer for specific (primitive) types
+
+        public Builder toInt() {
+            return this
+                    .regex("-?[1-9]\\d*|0")
+                    .conditionPrompt("Input a whole number")
+                    .normalize(s -> Integer.parseInt(s));
+        }
+
+        public Builder toFloat() {
+            return this
+                    .regex("-?[1-9]\\d*\\.?\\d*|0|-?0?\\.\\d+")
+                    .conditionPrompt("Input a number")
+                    .normalize(Float::parseFloat);
+        }
+
+        public Builder toChar() {
+            this.validator = (s, _) -> s.length() == 1 ? Optional.empty() : Optional.of("Input can only have one character");
+            this.conditionPrompt = "Input a single character";
+            return this.normalize(s -> s.charAt(0));
+        }
+
+        public Builder toBool() {
+            return this.toBool("Yes", "No");
+        }
+
+        public Builder toBool(final String yes) {
+            return this.normalize(s -> s.equalsIgnoreCase(yes));
+        }
+
+        public Builder toBool(final String yes, final String no) {
+            return this
+                    .options(new String[]{yes, no})
+                    .normalize(s -> s.equalsIgnoreCase(yes));
         }
 
         public Question build() {
